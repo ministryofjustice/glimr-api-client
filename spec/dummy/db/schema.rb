@@ -13,13 +13,10 @@
 ActiveRecord::Schema.define(version: 20160606133153) do
 
   create_table "fees", force: :cascade do |t|
-    t.string  "case_reference"
     t.string  "case_title"
-    t.string  "confirmation_code_digest"
     t.string  "description"
     t.integer "amount"
     t.integer "glimr_id"
-    t.index ["case_reference"], name: "index_fees_on_case_reference"
   end
 
 end

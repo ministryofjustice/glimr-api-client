@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'support/shared_examples_for_glimr'
-require 'pry'
 
 RSpec.describe GlimrApiClient::Available do
   subject { described_class.call }

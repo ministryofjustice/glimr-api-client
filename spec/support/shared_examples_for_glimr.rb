@@ -84,9 +84,9 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation
       'tribunalCaseId' => 60_029,
       'caseTitle' => 'You vs HM Revenue & Customs',
       'feeLiabilities' =>
-      [{ 'feeLiabilityId' => 7,
+      [{ 'feeLiabilityId' => '7',
          'onlineFeeTypeDescription' => 'Lodgement Fee',
-         'payableWithUnclearedInPence' => 2000 }]
+         'payableWithUnclearedInPence' => '2000' }]
     }.to_json
   }
 
@@ -95,7 +95,7 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation
       {
         method: :post,
         host: 'glimr-test.dsd.io',
-        body: /caseNumber=#{CGI.escape(case_number)}/,
+        body: /caseNumber=#{CGI.escape(case_number)}&jurisdictionId=8/,
         path: '/requestpayablecasefees'
       },
       status: 200, body: response_body

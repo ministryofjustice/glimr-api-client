@@ -10,8 +10,8 @@ RSpec.feature 'Request a brand new case' do
     let(:make_a_case_request) {
       visit '/'
       click_on 'Start now'
-      fill_in 'Case reference', with: case_number
-      fill_in 'Confirmation code', with: confirmation_code
+      fill_in 'case_request_case_reference', with: case_number
+      fill_in 'case_request_confirmation_code', with: confirmation_code
       click_on 'Find case'
     }
 
