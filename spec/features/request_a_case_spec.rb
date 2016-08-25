@@ -61,12 +61,13 @@ RSpec.feature 'Request a brand new case' do
     include_examples 'case not found'
 
     scenario 'then tell the user the case cannot be found' do
-      visit '/'
-      click_on 'Start now'
-      fill_in 'Case reference', with: 'some junk'
-      fill_in 'Confirmation code', with: 'ABC123'
-      click_on 'Find case'
-      expect(page).to have_text(/we could not find your case/i)
+      expect {
+        visit '/'
+        click_on 'Start now'
+        fill_in 'case_request_case_reference', with: case_number
+        fill_in 'case_request_confirmation_code', with: confirmation_code
+        click_on 'Find case'
+      }.to raise_error(GlimrApiClient::Api::CaseNotFound)
     end
   end
 
@@ -74,23 +75,13 @@ RSpec.feature 'Request a brand new case' do
     include_examples 'case not found'
 
     scenario 'then tell the user the case cannot be found' do
-      visit '/'
-      click_on 'Start now'
-      fill_in 'Case reference', with: 'TC/2016/00001'
-      fill_in 'Confirmation code', with: 'ABC123'
-      click_on 'Find case'
-      expect(page).to have_text(/we could not find your case/i)
-    end
-  end
-
-  describe 'without a confirmation code' do
-    scenario do
-      visit '/'
-      click_on 'Start now'
-      fill_in 'Case reference', with: 'some junk'
-      click_on 'Find case'
-      expect(page).to have_text(/we could not find your case/i)
-      expect(page).to have_text("Confirmation code can't be blank")
+      expect {
+        visit '/'
+        click_on 'Start now'
+        fill_in 'case_request_case_reference', with: 'TC/2016/00001'
+        fill_in 'case_request_confirmation_code', with: 'ABC123'
+        click_on 'Find case'
+      }.to raise_error(GlimrApiClient::Api::CaseNotFound)
     end
   end
 end
