@@ -5,6 +5,8 @@ class CreateFees < ActiveRecord::Migration[5.0]
       t.string :description
       t.integer :amount
       t.integer :glimr_id
+      t.string  :govpay_reference
+      t.string  :govpay_payment_id
     end
   end
 end

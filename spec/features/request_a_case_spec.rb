@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'support/shared_examples_for_glimr'
-require 'pry'
 
 RSpec.feature 'Request a brand new case' do
   case_number = 'TC/2012/00001'

@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'support/shared_examples_for_glimr'
-require 'pry'
 
 RSpec.describe GlimrApiClient::Case do
   include_examples 'a case fee of £20 is due', 'TT/2016/00001'

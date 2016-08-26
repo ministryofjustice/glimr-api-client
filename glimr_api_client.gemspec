@@ -15,7 +15,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 1.10'
   spec.add_development_dependency 'capybara'
-  spec.add_development_dependency 'factory_girl_rails'
   spec.add_development_dependency 'fuubar'
   spec.add_development_dependency 'launchy'
   spec.add_development_dependency 'mutant-rspec'

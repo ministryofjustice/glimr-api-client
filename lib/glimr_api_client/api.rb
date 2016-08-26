@@ -13,23 +13,15 @@ module GlimrApiClient
           @status = resp.status
         }
     rescue Excon::Error => e
-      raise Unavailable, e
-    end
-
-    def ok?
-      #:nocov:
-      # Only here to ensure devs understand why it might break.
-      raise 'Client action (post) must be called before ok?' if @post.blank?
-      #:nocov:
-      @status == 200
+      if endpoint == '/paymenttaken'
+        raise PaymentNotificationFailure, e
+      else
+        raise Unavailable, e
+      end
     end
 
     def response_body
       @response_body ||= JSON.parse(@body, symbolize_names: true)
-    end
-
-    def request_body
-      {}
     end
 
     private

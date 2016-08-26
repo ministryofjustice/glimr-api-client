@@ -148,7 +148,7 @@ RSpec.shared_examples 'no fees then a £20 fee' do |case_number, _confirmation_c
   end
 end
 
-RSpec.shared_examples 'report payment taken to glimr' do
+RSpec.shared_examples 'report payment taken to glimr' do |req_body|
   let(:paymenttaken_response) {
     {
       feeLiabilityId: 1234,
@@ -162,7 +162,7 @@ RSpec.shared_examples 'report payment taken to glimr' do
       {
         method: :post,
         host: 'glimr-test.dsd.io',
-        body: /govpayReference=rmpaurrjuehgpvtqg997bt50f&paidAmountInPence=2000/,
+        body: req_body,
         path: '/paymenttaken'
       },
       status: 200, body: paymenttaken_response.to_json

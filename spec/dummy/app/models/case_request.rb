@@ -5,14 +5,12 @@ class CaseRequest
     :confirmation_code,
     :fees
 
-  def initialize(case_reference, confirmation_code)
+  def initialize(case_reference, _confirmation_code)
     @case_reference = case_reference
-    @confirmation_code = confirmation_code
     @fees = []
   end
 
   validates :case_reference, presence: true
-  validates :confirmation_code, presence: true
 
   def process!
     glimr_case.fees.each do |fee|
@@ -40,6 +38,6 @@ class CaseRequest
   end
 
   def glimr_case
-    @glimr_case_request ||= GlimrApiClient::Case.find(case_reference, confirmation_code)
+    @glimr_case_request ||= GlimrApiClient::Case.find(case_reference)
   end
 end
