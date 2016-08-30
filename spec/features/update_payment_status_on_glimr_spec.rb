@@ -19,7 +19,7 @@ RSpec.feature 'update GLiMR with payment status' do
     it 'raises and exception' do
       visit new_fee_path
       expect { click_on 'Pay fee' }.
-        to raise_error(GlimrApiClient::Api::PaymentNotificationFailure)
+        to raise_error(GlimrApiClient::PaymentNotificationFailure)
     end
   end
 end

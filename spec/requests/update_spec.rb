@@ -31,24 +31,24 @@ RSpec.describe GlimrApiClient::Update do
   it 'complains if the amount is missing' do
     fee.update_column(:amount, nil)
     expect{ described_class.call(fee) }.
-      to raise_error(GlimrApiClient::Update::RequestError, /paidAmountInPence/i)
+      to raise_error(GlimrApiClient::RequestError, /paidAmountInPence/i)
   end
 
   it 'complains if the glimr_id is missing' do
     fee.update_column(:glimr_id, nil)
     expect{ described_class.call(fee) }.
-      to raise_error(GlimrApiClient::Update::RequestError, /feeLiabilityId/i)
+      to raise_error(GlimrApiClient::RequestError, /feeLiabilityId/i)
   end
 
   it 'complains if the govpay_payment_id is missing' do
     fee.update_column(:govpay_payment_id, nil)
     expect{ described_class.call(fee) }.
-      to raise_error(GlimrApiClient::Update::RequestError, /govpayReference/i)
+      to raise_error(GlimrApiClient::RequestError, /govpayReference/i)
   end
 
   it 'complains if the govpay_reference is missing' do
     fee.update_column(:govpay_reference, nil)
     expect{ described_class.call(fee) }.
-      to raise_error(GlimrApiClient::Update::RequestError, /paymentReference/i)
+      to raise_error(GlimrApiClient::RequestError, /paymentReference/i)
   end
 end

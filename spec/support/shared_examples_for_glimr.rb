@@ -16,12 +16,6 @@ RSpec.shared_examples 'glimr availability request returns a 500' do
   end
 end
 
-RSpec.shared_examples 'network error' do
-  before do
-    allow(Glimr).to receive(:available?).and_raise(Glimr::Api::Unavailable)
-  end
-end
-
 RSpec.shared_examples 'service is not available' do
   scenario do
     visit '/'

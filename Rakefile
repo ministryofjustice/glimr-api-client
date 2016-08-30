@@ -21,15 +21,16 @@ load 'rails/tasks/statistics.rake'
 
 require 'bundler/gem_tasks'
 
-begin
-  require 'rspec/core/rake_task'
+require 'rspec/core/rake_task'
 
-  RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:spec)
 
-  # Get rid of rspec background noise.
-  task(:spec).clear
-  RSpec::Core::RakeTask.new(:spec) do |t|
-    t.verbose = false
-  end
-  task default: :spec
+# Get rid of rspec background noise.
+task(:spec).clear
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.verbose = false
 end
+task default: :spec
+
+load 'tasks/mutant.rake'
+load 'tasks/rubocop.rake'

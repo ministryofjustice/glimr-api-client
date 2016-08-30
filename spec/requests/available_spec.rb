@@ -18,7 +18,7 @@ RSpec.describe GlimrApiClient::Available do
 
       it 'the call raises an error' do
         expect{ subject.available? }.
-          to raise_exception(GlimrApiClient::Api::Unavailable)
+          to raise_exception(GlimrApiClient::Unavailable)
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe GlimrApiClient::Available do
 
       it 'the call raises an error' do
         expect{ subject.available? }.
-          to raise_exception(GlimrApiClient::Api::Unavailable)
+          to raise_exception(GlimrApiClient::Unavailable)
       end
     end
   end

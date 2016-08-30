@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  rescue_from GlimrApiClient::Api::Unavailable,
+  rescue_from GlimrApiClient::Unavailable,
     with: :alert_glimr_is_not_available
 
   protect_from_forgery with: :exception

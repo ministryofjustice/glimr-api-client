@@ -5,4 +5,8 @@ require 'glimr_api_client/case'
 require 'glimr_api_client/update'
 
 module GlimrApiClient
+  class PaymentNotificationFailure < StandardError; end
+  class Unavailable < StandardError; end
+  class CaseNotFound < StandardError; end
+  class RequestError < StandardError; end;
 end

@@ -1,8 +1,5 @@
 module GlimrApiClient
   module Api
-    class PaymentNotificationFailure < StandardError; end
-    class Unavailable < StandardError; end
-    class CaseNotFound < StandardError; end
 
     def post
       @post ||=
@@ -14,9 +11,9 @@ module GlimrApiClient
         }
     rescue Excon::Error => e
       if endpoint == '/paymenttaken'
-        raise PaymentNotificationFailure, e
+        raise GlimrApiClient::PaymentNotificationFailure, e
       else
-        raise Unavailable, e
+        raise GlimrApiClient::Unavailable, e
       end
     end
 
@@ -28,11 +25,11 @@ module GlimrApiClient
 
     def handle_response_errors(resp)
       if resp.status == 404
-        raise CaseNotFound
+        raise GlimrApiClient::CaseNotFound
       elsif (400..599).cover?(resp.status) && endpoint == '/paymenttaken'
-        raise PaymentNotificationFailure, resp.status
+        raise GlimrApiClient::PaymentNotificationFailure, resp.status
       elsif (400..599).cover?(resp.status)
-        raise Unavailable, resp.status
+        raise GlimrApiClient::Unavailable, resp.status
       end
     end
 

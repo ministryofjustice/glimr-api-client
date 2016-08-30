@@ -1,6 +1,5 @@
 module GlimrApiClient
   class Update
-    class RequestError < StandardError; end;
     include GlimrApiClient::Api
 
     def self.call(*args)

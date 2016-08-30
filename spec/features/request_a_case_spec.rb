@@ -66,7 +66,7 @@ RSpec.feature 'Request a brand new case' do
         fill_in 'case_request_case_reference', with: case_number
         fill_in 'case_request_confirmation_code', with: confirmation_code
         click_on 'Find case'
-      }.to raise_error(GlimrApiClient::Api::CaseNotFound)
+      }.to raise_error(GlimrApiClient::CaseNotFound)
     end
   end
 
@@ -80,7 +80,7 @@ RSpec.feature 'Request a brand new case' do
         fill_in 'case_request_case_reference', with: 'TC/2016/00001'
         fill_in 'case_request_confirmation_code', with: 'ABC123'
         click_on 'Find case'
-      }.to raise_error(GlimrApiClient::Api::CaseNotFound)
+      }.to raise_error(GlimrApiClient::CaseNotFound)
     end
   end
 end

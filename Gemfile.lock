@@ -64,6 +64,8 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    codeclimate-test-reporter (0.6.0)
+      simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.1)
     concord (0.1.5)
       adamantium (~> 0.2.0)
@@ -237,6 +239,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.10)
   capybara
+  codeclimate-test-reporter
   fuubar
   glimr-api-client!
   launchy
@@ -246,7 +249,6 @@ DEPENDENCIES
   rake (~> 10.0)
   rspec-rails
   rubocop
-  simplecov
   sqlite3
 
 BUNDLED WITH
