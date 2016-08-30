@@ -16,12 +16,6 @@ RSpec.shared_examples 'glimr availability request returns a 500' do
   end
 end
 
-RSpec.shared_examples 'network error' do
-  before do
-    allow(Glimr).to receive(:available?).and_raise(Glimr::Api::Unavailable)
-  end
-end
-
 RSpec.shared_examples 'service is not available' do
   scenario do
     visit '/'
@@ -84,9 +78,9 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation
       'tribunalCaseId' => 60_029,
       'caseTitle' => 'You vs HM Revenue & Customs',
       'feeLiabilities' =>
-      [{ 'feeLiabilityId' => 7,
+      [{ 'feeLiabilityId' => '7',
          'onlineFeeTypeDescription' => 'Lodgement Fee',
-         'payableWithUnclearedInPence' => 2000 }]
+         'payableWithUnclearedInPence' => '2000' }]
     }.to_json
   }
 
@@ -95,7 +89,7 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation
       {
         method: :post,
         host: 'glimr-test.dsd.io',
-        body: /caseNumber=#{CGI.escape(case_number)}/,
+        body: /caseNumber=#{CGI.escape(case_number)}&jurisdictionId=8/,
         path: '/requestpayablecasefees'
       },
       status: 200, body: response_body
@@ -148,7 +142,7 @@ RSpec.shared_examples 'no fees then a £20 fee' do |case_number, _confirmation_c
   end
 end
 
-RSpec.shared_examples 'report payment taken to glimr' do
+RSpec.shared_examples 'report payment taken to glimr' do |req_body|
   let(:paymenttaken_response) {
     {
       feeLiabilityId: 1234,
@@ -162,7 +156,7 @@ RSpec.shared_examples 'report payment taken to glimr' do
       {
         method: :post,
         host: 'glimr-test.dsd.io',
-        body: /govpayReference=rmpaurrjuehgpvtqg997bt50f&paidAmountInPence=2000/,
+        body: req_body,
         path: '/paymenttaken'
       },
       status: 200, body: paymenttaken_response.to_json

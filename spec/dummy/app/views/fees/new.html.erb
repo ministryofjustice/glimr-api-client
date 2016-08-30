@@ -1,0 +1,11 @@
+<h1>This would normally be done via a postback from govpay.</h1>
+<h2>The dummy_fee/form is a convenience for testing and illustrative purposes.</h2>
+<%= form_for @dummy_fee do |f| %>
+  <%= f.text_field :case_title %>
+  <%= f.text_field :description %>
+  <%= f.text_field :amount %>
+  <%= f.text_field :glimr_id %>
+  <%= f.text_field :govpay_reference %>
+  <%= f.text_field :govpay_payment_id %>
+  <%= f.submit('Pay fee', class: 'button') %>
+<% end %>

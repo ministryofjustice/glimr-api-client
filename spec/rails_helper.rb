@@ -3,15 +3,14 @@ require File.expand_path('../dummy/config/environment', __FILE__)
 
 require 'spec_helper'
 require 'rspec/rails'
-require 'factory_girl_rails'
 require 'excon'
+require 'pry'
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
 
-  config.include FactoryGirl::Syntax::Methods
   config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:all) do

@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/ministryofjustice/glimr-api-client.svg?style=svg&circle-token=1d291c45a14d48ef123ffd904169e10b7f47411f)](https://circleci.com/gh/ministryofjustice/glimr-api-client)
+
 # GlimrApiClient
 
 A simple client to integrate with the GLiMR case management system in

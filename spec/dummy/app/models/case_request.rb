@@ -5,18 +5,16 @@ class CaseRequest
     :confirmation_code,
     :fees
 
-  def initialize(case_reference, confirmation_code)
+  def initialize(case_reference, _confirmation_code)
     @case_reference = case_reference
-    @confirmation_code = confirmation_code
     @fees = []
   end
 
   validates :case_reference, presence: true
-  validates :confirmation_code, presence: true
 
   def process!
-    fee_liabilities.each do |fee|
-      prepare_fee(fee)
+    glimr_case.fees.each do |fee|
+      fees << prepare_fee(fee)
     end
   end
 
@@ -32,21 +30,14 @@ class CaseRequest
 
   def prepare_fee(fee)
     Fee.create(
-      case_reference: case_reference,
-      case_title: title,
+      case_title: glimr_case.title,
       description: fee.description,
       amount: fee.amount,
       glimr_id: fee.glimr_id
-    ).tap { |f|
-      fees << f
-      # Because it is stored as a BCrypt digest.
-      f.update_attributes(confirmation_code: confirmation_code)
-    }
+    )
   end
 
-  def glimr_case_request
-    @glimr_case_request ||= Glimr.find_case(case_reference, confirmation_code)
+  def glimr_case
+    @glimr_case_request ||= GlimrApiClient::Case.find(case_reference)
   end
-
-  delegate :fee_liabilities, :title, to: :glimr_case_request
 end

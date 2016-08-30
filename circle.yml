@@ -1,0 +1,7 @@
+database:
+  override:
+    - bundle exec rake db:setup
+
+test:
+  override:
+    - bundle exec rake
