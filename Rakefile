@@ -32,6 +32,4 @@ begin
     t.verbose = false
   end
   task default: :spec
-rescue LoadError
-    # no rspec available
 end
