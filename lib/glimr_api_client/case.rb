@@ -22,7 +22,7 @@ module GlimrApiClient
     def fees
       @fees ||= response_body.fetch(:feeLiabilities).map do |fee|
         OpenStruct.new(
-          glimrId: Integer(fee.fetch(:feeLiabilityId)),
+          glimr_id: Integer(fee.fetch(:feeLiabilityId)),
           description: fee.fetch(:onlineFeeTypeDescription),
           amount: Integer(fee.fetch(:payableWithUnclearedInPence))
         )
