@@ -30,4 +30,5 @@ $ gem install glimr_api_client
 Contribution directions go here.
 
 ## License
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+Released under the [MIT License](http://opensource.org/licenses/MIT).
+Copyright (c) 2015-2016 Ministry of Justice.
