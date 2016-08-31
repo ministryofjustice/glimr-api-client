@@ -22,7 +22,7 @@ RSpec.describe GlimrApiClient::Case do
       expect(subject.fees).to eq(
         [
           OpenStruct.new(
-            glimrId: 7,
+            glimr_id: 7,
             description: 'Lodgement Fee',
             amount: 2000
           )
@@ -31,7 +31,7 @@ RSpec.describe GlimrApiClient::Case do
     end
 
     it 'casts the returned values correctly' do
-      expect(subject.fees.first.glimrId).to be_an_integer
+      expect(subject.fees.first.glimr_id).to be_an_integer
       expect(subject.fees.first.description).to be_a(String)
       expect(subject.fees.first.amount).to be_an_integer
     end
