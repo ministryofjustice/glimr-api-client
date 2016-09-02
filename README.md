@@ -84,7 +84,7 @@ install these, install the gem, make sure you have the `spec/support`
 subdirectory then run:
 
 ```ruby
-bundle exec rake rake glimr_api_client:install_shared_examples
+bundle exec rake glimr_api_client:install_shared_examples
 ```
 
 This will install `spec/support/shared_examples_for_glimr.rb`.
@@ -113,6 +113,7 @@ Make sure the tests pass:
 
 ```bash
 bundle
+bundle db:setup
 bundle exec rake
 ```
 
