@@ -76,30 +76,11 @@ $ gem install glimr-api-client
 Run `bundle rake` in the gem source directory for a full set of specs,
 mutation tests and rubocop checks.
 
-### Shared examples
+### In an application
 
-The gem can install a set of shared examples in your app that will stub
-a sensible set of API calls using Excon’s stubbing functionality. To
-install these, install the gem, make sure you have the `spec/support`
-subdirectory then run:
-
-```ruby
-bundle exec rake glimr_api_client:install_shared_examples
-```
-
-This will install `spec/support/shared_examples_for_glimr.rb`.
-
-Lastly, add these lines to `spec/rails_helper`:
-
-```ruby
-  config.before(:all) do
-    Excon.defaults[:mock] = true
-  end
-
-  config.after(:each) do
-    Excon.stubs.clear
-  end
-```
+Examples of how this gem might be used can be found in the specs.  There
+is also a set of RSpec shared examples that can be copied and modified.
+These can be found in `spec/suppport/shared_examples_for_govpay.rb`.
 
 ## Contributing
 

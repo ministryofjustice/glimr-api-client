@@ -1,4 +1,3 @@
-require 'glimr_api_client/railtie' if defined?(Rails)
 require 'glimr_api_client/version'
 require 'glimr_api_client/api'
 require 'glimr_api_client/available'
