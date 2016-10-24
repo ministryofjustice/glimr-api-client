@@ -1,3 +1,7 @@
+require 'excon'
+require 'active_support'
+require 'active_support/core_ext/object/to_query'
+
 module GlimrApiClient
   module Api
 
@@ -7,13 +11,12 @@ module GlimrApiClient
           # Only timeouts and network issues raise errors.
           handle_response_errors(resp)
           @body = resp.body
-          @status = resp.status
         }
     rescue Excon::Error => e
-      if endpoint == '/paymenttaken'
-        raise GlimrApiClient::PaymentNotificationFailure, e
+      if endpoint.eql?('/paymenttaken')
+        raise PaymentNotificationFailure, e
       else
-        raise GlimrApiClient::Unavailable, e
+        raise Unavailable, e
       end
     end
 
@@ -24,12 +27,14 @@ module GlimrApiClient
     private
 
     def handle_response_errors(resp)
-      if resp.status == 404
-        raise GlimrApiClient::CaseNotFound
-      elsif (400..599).cover?(resp.status) && endpoint == '/paymenttaken'
-        raise GlimrApiClient::PaymentNotificationFailure, resp.status
+      if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
+        raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
-        raise GlimrApiClient::Unavailable, resp.status
+        if endpoint.eql?('/paymenttaken')
+          raise PaymentNotificationFailure, resp.status
+        else
+          raise Unavailable, resp.status
+        end
       end
     end
 
@@ -40,7 +45,8 @@ module GlimrApiClient
           'Content-Type' => 'application/json',
           'Accept' => 'application/json'
         },
-        persistent: true
+        persistent: true,
+        connect_timeout: 15
       )
     end
   end
