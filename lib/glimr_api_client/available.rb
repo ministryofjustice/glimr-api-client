@@ -1,10 +1,9 @@
 module GlimrApiClient
   class Available
     include GlimrApiClient::Api
+    extend SingleForwardable
 
-    class << self
-      delegate :call, to: :new
-    end
+    def_delegator :new, :call
 
     def call
       post
