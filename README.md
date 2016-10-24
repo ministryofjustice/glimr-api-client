@@ -7,6 +7,12 @@ use in various UK tribunals.
 
 ## Usage
 
+### Configuration
+
+The gem expects a `GLIMR_API_URL` environment variable, providing the endpoint at which the API can be found. This will be something like; `https://glimr-api.taxtribunals.dsd.io`
+
+This URL must be accessible from wherever your code is running.
+
 ### Check Availablity
 
 ```ruby
