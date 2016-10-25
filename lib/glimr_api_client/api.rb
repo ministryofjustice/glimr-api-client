@@ -4,7 +4,6 @@ require 'active_support/core_ext/object/to_query'
 
 module GlimrApiClient
   module Api
-
     def post
       @post ||=
         client.post(path: endpoint, body: request_body.to_query).tap { |resp|
@@ -45,8 +44,7 @@ module GlimrApiClient
           'Content-Type' => 'application/json',
           'Accept' => 'application/json'
         },
-        persistent: true,
-        connect_timeout: 15
+        persistent: true
       )
     end
   end
