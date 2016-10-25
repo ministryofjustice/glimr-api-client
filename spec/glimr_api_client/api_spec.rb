@@ -10,10 +10,10 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         method: :post,
         body: 'parameter=parameter',
         headers: {
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      },
-      path: '/endpoint',
+          "Content-Type" => "application/json",
+          "Accept" => "application/json"
+        },
+      path: '/Live_API/api/tdsapi/endpoint',
       persistent: true
       },
       status: 200, body: { response: 'response' }.to_json
@@ -29,7 +29,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/endpoint',
+          path: '/Live_API/api/tdsapi/endpoint'
         },
         status: 404
       )
@@ -40,7 +40,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/endpoint',
+          path: '/Live_API/api/tdsapi/endpoint'
         },
         status: 500
       )
@@ -51,7 +51,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/endpoint',
+          path: '/Live_API/api/tdsapi/endpoint'
         },
         status: 400
       )
@@ -62,7 +62,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/endpoint',
+          path: '/Live_API/api/tdsapi/endpoint'
         },
         status: 399
       )
@@ -73,7 +73,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/endpoint',
+          path: '/Live_API/api/tdsapi/endpoint'
         },
         status: 600
       )
@@ -84,7 +84,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/endpoint',
+          path: '/Live_API/api/tdsapi/endpoint'
         },
         status: 599
       )
@@ -97,7 +97,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/paymenttaken',
+            path: '/Live_API/api/tdsapi/paymenttaken'
           },
           status: 399
         )
@@ -108,7 +108,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/paymenttaken',
+            path: '/Live_API/api/tdsapi/paymenttaken'
           },
           status: 600
         )
@@ -119,7 +119,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/paymenttaken',
+            path: '/Live_API/api/tdsapi/paymenttaken'
           },
           status: 404
         )
@@ -130,7 +130,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/paymenttaken',
+            path: '/Live_API/api/tdsapi/paymenttaken'
           },
           status: 500
         )
