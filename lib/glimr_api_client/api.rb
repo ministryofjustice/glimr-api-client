@@ -34,8 +34,11 @@ module GlimrApiClient
       if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
         raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
-        if endpoint.eql?('/paymenttaken')
+        case endpoint
+        when '/paymenttaken'
           raise PaymentNotificationFailure, resp.status
+        when '/registernewcase'
+          raise RegisterNewCaseFailure, resp.status
         else
           raise Unavailable, resp.status
         end
