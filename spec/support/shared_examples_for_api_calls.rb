@@ -43,4 +43,26 @@ RSpec.shared_examples 'anonymous object' do
       end
     end.new
   end
+
+  let(:registernewcase_object) do
+    Class.new do
+      include GlimrApiClient::Api
+
+      def initialize(call = nil)
+        @call = call
+      end
+
+      def call
+        "called#{@call}"
+      end
+
+      def endpoint
+        '/registernewcase'
+      end
+
+      def request_body
+        { parameter: 'parameter' }
+      end
+    end.new
+  end
 end
