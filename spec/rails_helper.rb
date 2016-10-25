@@ -20,7 +20,10 @@ RSpec.configure do |config|
   config.before(:each) do
     I18n.locale = I18n.default_locale
     Excon.stub(
-      { host: 'glimr-test.dsd.io', path: '/glimravailable' },
+      {
+        host: 'glimr-api.taxtribunals.dsd.io',
+        path: '/Live_API/api/tdsapi/glimravailable'
+      },
       { status: 200, body: { glimrAvailable: 'yes' }.to_json }
     )
   end

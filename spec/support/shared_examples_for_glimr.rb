@@ -1,7 +1,10 @@
 RSpec.shared_examples 'glimr availability request' do |glimr_response|
   before do
     Excon.stub(
-      { host: 'glimr-test.dsd.io', path: '/glimravailable' },
+      {
+        host: 'glimr-api.taxtribunals.dsd.io',
+        path: '/Live_API/api/tdsapi/glimravailable'
+      },
       status: 200, body: glimr_response.to_json
     )
   end
@@ -10,7 +13,10 @@ end
 RSpec.shared_examples 'glimr availability request returns a 500' do
   before do
     Excon.stub(
-      { host: 'glimr-test.dsd.io', path: '/glimravailable' },
+      {
+        host: 'glimr-api.taxtribunals.dsd.io',
+        path: '/Live_API/api/tdsapi/glimravailable'
+      },
       status: 500
     )
   end
@@ -28,9 +34,9 @@ RSpec.shared_examples 'generic glimr response' do |case_number, _confirmation_co
   before do
     Excon.stub(
       {
-        host: 'glimr-test.dsd.io',
+        host: 'glimr-api.taxtribunals.dsd.io',
         body: /caseNumber=#{CGI.escape(case_number)}/,
-        path: '/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: status, body: glimr_response.to_json
     )
@@ -41,8 +47,8 @@ RSpec.shared_examples 'case not found' do
   before do
     Excon.stub(
       {
-        host: 'glimr-test.dsd.io',
-        path: '/requestpayablecasefees'
+        host: 'glimr-api.taxtribunals.dsd.io',
+        path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 404
     )
@@ -62,9 +68,9 @@ RSpec.shared_examples 'no new fees are due' do |case_number, _confirmation_code|
   before do
     Excon.stub(
       {
-        host: 'glimr-test.dsd.io',
+        host: 'glimr-api.taxtribunals.dsd.io',
         body: /caseNumber=#{CGI.escape(case_number)}/,
-        path: '/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: response_body.to_json
     )
@@ -88,9 +94,9 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation
     Excon.stub(
       {
         method: :post,
-        host: 'glimr-test.dsd.io',
+        host: 'glimr-api.taxtribunals.dsd.io',
         body: /caseNumber=#{CGI.escape(case_number)}&jurisdictionId=8/,
-        path: '/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: response_body
     )
@@ -123,9 +129,9 @@ RSpec.shared_examples 'no fees then a £20 fee' do |case_number, _confirmation_c
     Excon.stub(
       {
         method: :post,
-        host: 'glimr-test.dsd.io',
+        host: 'glimr-api.taxtribunals.dsd.io',
         body: /caseNumber=#{CGI.escape(case_number)}/,
-        path: '/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: no_fees.to_json
     )
@@ -133,9 +139,9 @@ RSpec.shared_examples 'no fees then a £20 fee' do |case_number, _confirmation_c
     Excon.stub(
       {
         method: :post,
-        host: 'glimr-test.dsd.io',
+        host: 'glimr-api.taxtribunals.dsd.io',
         body: /caseNumber=#{CGI.escape(case_number)}/,
-        path: '/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: twenty_pound_fee.to_json
     )
@@ -155,9 +161,9 @@ RSpec.shared_examples 'report payment taken to glimr' do |req_body|
     Excon.stub(
       {
         method: :post,
-        host: 'glimr-test.dsd.io',
+        host: 'glimr-api.taxtribunals.dsd.io',
         body: req_body,
-        path: '/paymenttaken'
+        path: '/Live_API/api/tdsapi/paymenttaken'
       },
       status: 200, body: paymenttaken_response.to_json
     )
@@ -169,8 +175,8 @@ RSpec.shared_examples 'glimr fee_paid returns a 500' do
     Excon.stub(
       {
         method: :post,
-        host: 'glimr-test.dsd.io',
-        path: '/paymenttaken'
+        host: 'glimr-api.taxtribunals.dsd.io',
+        path: '/Live_API/api/tdsapi/paymenttaken'
       },
       status: 500
     )
@@ -180,12 +186,12 @@ end
 RSpec.shared_examples 'glimr times out' do
   let(:glimr_check) {
     class_double(Excon, 'glimr availability')
-  }
+  requestpayablecasefees}
 
   before do
     expect(glimr_check).
       to receive(:post).
-      with(path: '/glimravailable', body: '').
+      with(path: '/Live_API/api/tdsapi/glimravailable', body: '').
       and_raise(Excon::Errors::Timeout)
 
     expect(Excon).to receive(:new).
@@ -202,11 +208,11 @@ RSpec.shared_examples 'glimr has a socket error' do
   before do
     expect(glimr_check).
       to receive(:post).
-      with(path: '/glimravailable', body: '').
+      with(body: '').
       and_raise(Excon::Errors::SocketError)
 
     expect(Excon).to receive(:new).
-      with('https://glimr-test.dsd.io', anything).
+      with('https://glimr-api.taxtribunals.dsd.io/Live_API/api/tdsapi/glimravailable', anything).
       and_return(glimr_check)
   end
 end
