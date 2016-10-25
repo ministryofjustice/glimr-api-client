@@ -27,7 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'sqlite3', '~> 1.3'
 
   spec.add_dependency 'excon', '~> 0.51'
-  spec.add_dependency 'excon-addressable', '~> 0.3'
-  spec.add_dependency 'addressable', '~> 2.4'
   spec.add_dependency 'activesupport', '~> 5.0'
 end
