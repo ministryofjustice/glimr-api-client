@@ -12,9 +12,9 @@ module GlimrApiClient
         :jurisdictionId,
         :onlineMappingCode
       ].each do |required|
-        errors << required if request_body.key?(required).blank?
+        errors << required if request_body.fetch(required, nil).nil?
       end
-      raise RequestError, errors unless errors.blank?
+      raise RequestError, errors unless errors.empty?
     end
 
     def endpoint
