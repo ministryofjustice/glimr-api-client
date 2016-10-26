@@ -15,14 +15,14 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
   context 'validating parameters' do
 		let(:valid_params) { { jurisdictionId: 8, onlineMappingCode: 'something' } }
 
-		it 'barfs when no parameters are supplied' do
+		it 'raises an error when no parameters are supplied' do
 			expect { described_class.call }.to raise_error(ArgumentError)
 		end
 
 		context 'when onlineMappingCode is missing' do
 			let(:params) { { jurisdictionId: 8 } }
 
-			it 'barfs' do
+			it 'raises an error' do
 				expect { described_class.call(params) }.to raise_error(GlimrApiClient::RequestError, '[:onlineMappingCode]')
 			end
 		end
@@ -30,7 +30,7 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
 		context 'when jurisdictionId is missing' do
 			let(:params) { { onlineMappingCode: 'something' } }
 
-			it 'barfs' do
+			it 'raises an error' do
 				expect { described_class.call(params) }.to raise_error(GlimrApiClient::RequestError, '[:jurisdictionId]')
 			end
 		end
