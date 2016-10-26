@@ -232,7 +232,6 @@ RSpec.shared_examples 'register new case with glimr' do |req_body|
       {
         method: :post,
         host: 'glimr-api.taxtribunals.dsd.io',
-        body: req_body,
         path: '/Live_API/api/tdsapi/registernewcase'
       },
       status: 200, body: registernewcase_response.to_json

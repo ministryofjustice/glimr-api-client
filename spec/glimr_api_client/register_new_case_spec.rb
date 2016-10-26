@@ -1,6 +1,9 @@
 require 'rails_helper'
+require 'support/shared_examples_for_glimr'
 
 RSpec.describe GlimrApiClient::RegisterNewCase do
+  include_examples 'register new case with glimr'
+
   subject(:reg) { described_class.new(params) }
 
   context "when required parameters are missing" do
