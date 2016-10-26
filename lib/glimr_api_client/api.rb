@@ -54,10 +54,10 @@ module GlimrApiClient
       Excon.new(
         uri,
         headers: {
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json'
-      },
-      persistent: true
+					'Content-Type' => 'application/json',
+					'Accept' => 'application/json'
+				},
+				persistent: true
       )
     end
   end
