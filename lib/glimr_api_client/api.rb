@@ -10,8 +10,6 @@ module GlimrApiClient
         'https://glimr-api.taxtribunals.dsd.io/Live_API/api/tdsapi'
     )
 
-    # TODO: extract error handling method
-
     def post
       client("#{DEFAULT_ENDPOINT}#{endpoint}").post(body: request_body.to_query).tap { |resp|
         # Only timeouts and network issues raise errors.
@@ -19,14 +17,7 @@ module GlimrApiClient
         @body = resp.body
       }
     rescue Excon::Error => e
-      case endpoint
-      when '/paymenttaken'
-        raise PaymentNotificationFailure, e
-      when '/registernewcase'
-        raise RegisterNewCaseFailure, e
-      else
-        raise Unavailable, e
-      end
+      re_raise_error(endpoint, e)
     end
 
     def response_body
@@ -39,14 +30,18 @@ module GlimrApiClient
       if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
         raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
-        case endpoint
-        when '/paymenttaken'
-          raise PaymentNotificationFailure, resp.status
-        when '/registernewcase'
-          raise RegisterNewCaseFailure, resp.status
-        else
-          raise Unavailable, resp.status
-        end
+        re_raise_error(endpoint, resp.status)
+      end
+    end
+
+    def re_raise_error(docpath, e)
+      case docpath
+      when '/paymenttaken'
+        raise PaymentNotificationFailure, e
+      when '/registernewcase'
+        raise RegisterNewCaseFailure, e
+      else
+        raise Unavailable, e
       end
     end
 
