@@ -1,19 +1,7 @@
 module GlimrApiClient
-  class RegisterNewCase
-    include GlimrApiClient::Api
-
-    def self.call(*args)
-      new(*args).call
-    end
-
+  class RegisterNewCase < Base
     def initialize(params)
       @params = params
-    end
-
-    def call
-      check_request!
-      post
-      self
     end
 
     private

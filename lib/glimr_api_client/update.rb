@@ -1,19 +1,7 @@
 module GlimrApiClient
-  class Update
-    include GlimrApiClient::Api
-
-    def self.call(*args)
-      new(*args).call
-    end
-
+  class Update < Base
     def initialize(fee)
       @fee = fee
-    end
-
-    def call
-      check_request!
-      post
-      self
     end
 
     private
