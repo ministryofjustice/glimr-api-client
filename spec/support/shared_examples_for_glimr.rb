@@ -216,3 +216,26 @@ RSpec.shared_examples 'glimr has a socket error' do
       and_return(glimr_check)
   end
 end
+
+RSpec.shared_examples 'register new case with glimr' do
+  let(:registernewcase_response) {
+    {
+      jurisdictionId: 8,
+      tribunalCaseId: '12345678',
+      tribunalCaseNumber: "TC/2016/00006",
+      caseTitle: "John James vs HMRC"
+    }
+  }
+
+  before do
+    Excon.stub(
+      {
+        method: :post,
+        host: 'glimr-api.taxtribunals.dsd.io',
+        path: '/Live_API/api/tdsapi/registernewcase'
+      },
+      status: 200, body: registernewcase_response.to_json
+    )
+  end
+end
+

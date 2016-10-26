@@ -17,11 +17,7 @@ module GlimrApiClient
         @body = resp.body
       }
     rescue Excon::Error => e
-      if endpoint.eql?('/paymenttaken')
-        raise PaymentNotificationFailure, e
-      else
-        raise Unavailable, e
-      end
+      re_raise_error(endpoint, e)
     end
 
     def response_body
@@ -34,11 +30,18 @@ module GlimrApiClient
       if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
         raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
-        if endpoint.eql?('/paymenttaken')
-          raise PaymentNotificationFailure, resp.status
-        else
-          raise Unavailable, resp.status
-        end
+        re_raise_error(endpoint, resp.status)
+      end
+    end
+
+    def re_raise_error(docpath, e)
+      case docpath
+      when '/paymenttaken'
+        raise PaymentNotificationFailure, e
+      when '/registernewcase'
+        raise RegisterNewCaseFailure, e
+      else
+        raise Unavailable, e
       end
     end
 
@@ -46,10 +49,10 @@ module GlimrApiClient
       Excon.new(
         uri,
         headers: {
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json'
-      },
-      persistent: true
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json'
+        },
+        persistent: true
       )
     end
   end
