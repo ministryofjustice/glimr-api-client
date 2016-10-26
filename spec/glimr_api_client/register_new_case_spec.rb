@@ -38,7 +38,7 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
     it 'does not barf when required parameters are provided' do
       expect { described_class.call(valid_params) }.not_to raise_error
     end
-   end
+  end
 
   context 'when all parameters are provided' do
     let(:params) { {
