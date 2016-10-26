@@ -217,7 +217,7 @@ RSpec.shared_examples 'glimr has a socket error' do
   end
 end
 
-RSpec.shared_examples 'register new case with glimr' do |req_body|
+RSpec.shared_examples 'register new case with glimr' do
   let(:registernewcase_response) {
     {
       jurisdictionId: 8,
