@@ -193,5 +193,10 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       expect(paymenttaken_object).to receive(:client).and_return(excon)
       expect { paymenttaken_object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, 'it died')
     end
+
+    it 'raises a register new case exception if the client dies' do
+      expect(registernewcase_object).to receive(:client).and_return(excon)
+      expect { registernewcase_object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, 'it died')
+    end
   end
 end
