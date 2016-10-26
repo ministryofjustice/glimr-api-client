@@ -5,40 +5,40 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
   include_examples 'register new case with glimr'
 
   let(:params) { {} }
-	let(:excon) { class_double(Excon, post: double(status: 200, body: '')) }
-	let(:api) { described_class.new(params) }
+  let(:excon) { class_double(Excon, post: double(status: 200, body: '')) }
+  let(:api) { described_class.new(params) }
 
-	before do
-		allow(api).to receive(:client).and_return(excon)
-	end
+  before do
+    allow(api).to receive(:client).and_return(excon)
+  end
 
   context 'validating parameters' do
-		let(:valid_params) { { jurisdictionId: 8, onlineMappingCode: 'something' } }
+    let(:valid_params) { { jurisdictionId: 8, onlineMappingCode: 'something' } }
 
-		it 'raises an error when no parameters are supplied' do
-			expect { described_class.call }.to raise_error(ArgumentError)
-		end
+    it 'raises an error when no parameters are supplied' do
+      expect { described_class.call }.to raise_error(ArgumentError)
+    end
 
-		context 'when onlineMappingCode is missing' do
-			let(:params) { { jurisdictionId: 8 } }
+    context 'when onlineMappingCode is missing' do
+      let(:params) { { jurisdictionId: 8 } }
 
-			it 'raises an error' do
-				expect { described_class.call(params) }.to raise_error(GlimrApiClient::RequestError, '[:onlineMappingCode]')
-			end
-		end
+      it 'raises an error' do
+        expect { described_class.call(params) }.to raise_error(GlimrApiClient::RequestError, '[:onlineMappingCode]')
+      end
+    end
 
-		context 'when jurisdictionId is missing' do
-			let(:params) { { onlineMappingCode: 'something' } }
+    context 'when jurisdictionId is missing' do
+      let(:params) { { onlineMappingCode: 'something' } }
 
-			it 'raises an error' do
-				expect { described_class.call(params) }.to raise_error(GlimrApiClient::RequestError, '[:jurisdictionId]')
-			end
-		end
+      it 'raises an error' do
+        expect { described_class.call(params) }.to raise_error(GlimrApiClient::RequestError, '[:jurisdictionId]')
+      end
+    end
 
-		it 'does not barf when required parameters are provided' do
-			expect { described_class.call(valid_params) }.not_to raise_error
-		end
- 	end
+    it 'does not barf when required parameters are provided' do
+      expect { described_class.call(valid_params) }.not_to raise_error
+    end
+   end
 
   context 'when all parameters are provided' do
     let(:params) { {
