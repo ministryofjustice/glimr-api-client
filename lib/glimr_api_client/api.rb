@@ -4,14 +4,8 @@ require 'active_support/core_ext/object/to_query'
 
 module GlimrApiClient
   module Api
-    DEFAULT_ENDPOINT =
-      ENV.fetch(
-        'GLIMR_API_URL',
-        'https://glimr-api.taxtribunals.dsd.io/Live_API/api/tdsapi'
-    )
-
     def post
-      client("#{DEFAULT_ENDPOINT}#{endpoint}").post(body: request_body.to_query).tap { |resp|
+      client("#{api_url}#{endpoint}").post(body: request_body.to_query).tap { |resp|
         # Only timeouts and network issues raise errors.
         handle_response_errors(resp)
         @body = resp.body
@@ -25,6 +19,14 @@ module GlimrApiClient
     end
 
     private
+
+    # If this is set using a constant, and the gem is included in a project
+    # that uses the dotenv gem, then it will always fall through to the default
+    # unless dotenv is included and required before this gem is loaded.
+    def api_url
+      ENV.fetch('GLIMR_API_URL',
+                'https://glimr-api.taxtribunals.dsd.io/Live_API/api/tdsapi')
+    end
 
     def handle_response_errors(resp)
       if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
@@ -49,10 +51,10 @@ module GlimrApiClient
       Excon.new(
         uri,
         headers: {
-          'Content-Type' => 'application/json',
-          'Accept' => 'application/json'
-        },
-        persistent: true
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json'
+      },
+      persistent: true
       )
     end
   end
