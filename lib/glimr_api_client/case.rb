@@ -2,6 +2,8 @@ module GlimrApiClient
   class Case
     include GlimrApiClient::Api
 
+    TRIBUNAL_JURISDICTION_ID = 8
+
     def self.find(case_reference = nil)
       new(case_reference).call
     end
@@ -37,8 +39,10 @@ module GlimrApiClient
 
     def request_body
       {
-        jurisdictionId: 8, # TODO: Remove when no longer required in API
         caseNumber: @case_reference
+        # jurisdictionId is in the spec for this method, but doesn't actually seem to be necessary.
+        # Leaving it here, just in case a requirement is added in future
+        jurisdictionId: TRIBUNAL_JURISDICTION_ID,
       }
     end
   end
