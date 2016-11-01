@@ -4,9 +4,9 @@ require 'support/shared_examples_for_glimr'
 RSpec.describe GlimrApiClient::Case do
   include_examples 'a case fee of £20 is due', 'TT/2016/00001', 'ABC123'
 
-  it 'requires a case reference' do
-    expect{ described_class.find }.to raise_error(GlimrApiClient::Unavailable)
-    expect{ described_class.new.call }.to raise_error(GlimrApiClient::Unavailable)
+  it 'requires two parameters' do
+    expect{ described_class.find }.to raise_error(ArgumentError)
+    expect{ described_class.find('something') }.to raise_error(ArgumentError)
   end
 
   subject { described_class.find('TT/2016/00001', 'ABC123') }

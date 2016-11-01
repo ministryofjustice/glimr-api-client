@@ -4,12 +4,12 @@ module GlimrApiClient
 
     TRIBUNAL_JURISDICTION_ID = 8
 
-    def self.find(case_reference = nil, confirmation_code = nil)
+    def self.find(case_reference, confirmation_code)
       new(case_reference, confirmation_code).call
     end
 
     # TODO: these should be required parameters
-    def initialize(case_reference = nil, confirmation_code = nil)
+    def initialize(case_reference, confirmation_code)
       @case_reference = case_reference
       @confirmation_code = confirmation_code
     end
