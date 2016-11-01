@@ -1,5 +1,4 @@
 require 'excon'
-require 'active_support'
 
 module GlimrApiClient
   module Api
