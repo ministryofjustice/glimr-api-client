@@ -5,7 +5,11 @@ RSpec.describe GlimrApiClient::Update do
   subject { described_class.call(fee) }
 
   include_examples 'report payment taken to glimr',
-      'feeLiabilityId=12345&govpayReference=123ABC&paidAmountInPence=2000&paymentReference=ref123'
+      # The excon stub is sensitive to the ordering of the request body order.
+      { feeLiabilityId: 12345,
+      paymentReference: 'ref123',
+      govpayReference: '123ABC',
+      paidAmountInPence: 2000 }.to_json
 
   let(:fee) {
     Fee.create(
