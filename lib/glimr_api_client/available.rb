@@ -25,7 +25,6 @@ module GlimrApiClient
     end
 
     def request_body
-      {}
     end
   end
 end

@@ -8,7 +8,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     Excon.stub(
       {
         method: :post,
-        body: 'parameter=parameter',
+        body: { parameter: "parameter" }.to_json,
         headers: {
           "Content-Type" => "application/json",
           "Accept" => "application/json"

@@ -69,7 +69,7 @@ RSpec.shared_examples 'no new fees are due' do |case_number, _confirmation_code|
     Excon.stub(
       {
         host: 'glimr-api.taxtribunals.dsd.io',
-        body: /caseNumber=#{CGI.escape(case_number)}/,
+        body: { caseNumber: case_number }.to_json,
         path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: response_body.to_json
@@ -77,7 +77,7 @@ RSpec.shared_examples 'no new fees are due' do |case_number, _confirmation_code|
   end
 end
 
-RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation_code|
+RSpec.shared_examples 'a case fee of £20 is due' do |case_number, confirmation_code|
   let(:response_body) {
     {
       'jurisdictionId' => 8,
@@ -95,7 +95,8 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, _confirmation
       {
         method: :post,
         host: 'glimr-api.taxtribunals.dsd.io',
-        body: /caseNumber=#{CGI.escape(case_number)}&jurisdictionId=8/,
+        # NOTE: These are order-sensitive.
+        body: { jurisdictionId: 8, caseNumber: case_number, confirmationCode: confirmation_code }.to_json,
         path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: response_body
@@ -208,7 +209,6 @@ RSpec.shared_examples 'glimr has a socket error' do
   before do
     expect(glimr_check).
       to receive(:post).
-      with(body: '').
       and_raise(Excon::Errors::SocketError)
 
     expect(Excon).to receive(:new).

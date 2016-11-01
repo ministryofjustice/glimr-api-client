@@ -72,8 +72,7 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
     } }
 
     it 'posts all the parameters to glimr' do
-      querystring = params.keys.sort.collect {|k| [k, params[k]].join('=')}.join('&')
-      post_params = { body: querystring }
+      post_params = { body: params.to_json }
       expect(excon).to receive(:post).with(post_params)
       api.call
     end

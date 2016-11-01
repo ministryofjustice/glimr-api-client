@@ -1,11 +1,9 @@
 require 'excon'
-require 'active_support'
-require 'active_support/core_ext/object/to_query'
 
 module GlimrApiClient
   module Api
     def post
-      client("#{api_url}#{endpoint}").post(body: request_body.to_query).tap { |resp|
+      client("#{api_url}#{endpoint}").post(body: request_body.to_json).tap { |resp|
         # Only timeouts and network issues raise errors.
         handle_response_errors(resp)
         @body = resp.body
