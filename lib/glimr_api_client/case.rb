@@ -4,12 +4,14 @@ module GlimrApiClient
 
     TRIBUNAL_JURISDICTION_ID = 8
 
-    def self.find(case_reference = nil)
-      new(case_reference).call
+    def self.find(case_reference = nil, confirmation_code = nil)
+      new(case_reference, confirmation_code).call
     end
 
-    def initialize(case_reference = nil)
+    # TODO: these should be required parameters
+    def initialize(case_reference = nil, confirmation_code = nil)
       @case_reference = case_reference
+      @confirmation_code = confirmation_code
     end
 
     def call
@@ -39,10 +41,11 @@ module GlimrApiClient
 
     def request_body
       {
-        caseNumber: @case_reference
         # jurisdictionId is in the spec for this method, but doesn't actually seem to be necessary.
         # Leaving it here, just in case a requirement is added in future
         jurisdictionId: TRIBUNAL_JURISDICTION_ID,
+        caseNumber: @case_reference,
+        confirmationCode: @confirmation_code
       }
     end
   end
