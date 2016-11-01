@@ -8,7 +8,6 @@ module GlimrApiClient
       new(case_reference, confirmation_code).call
     end
 
-    # TODO: these should be required parameters
     def initialize(case_reference, confirmation_code)
       @case_reference = case_reference
       @confirmation_code = confirmation_code
