@@ -53,7 +53,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
   end
 
   context 'common errors' do
-    it 'raises case not found on 404' do
+    it 'raises unavailable on 404' do
       Excon.stub(
         {
           method: :post,
@@ -61,7 +61,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 404
       )
-      expect { object.post }.to raise_error(GlimrApiClient::CaseNotFound, '404')
+      expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '404')
     end
 
     it 'raises an exception when it receives a 500' do
@@ -117,6 +117,29 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         status: 599
       )
       expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '599')
+    end
+
+    context '/requestpayablecasefees' do
+      let(:api_endpoint) { 'requestpayablecasefees' }
+
+      before do
+        object.instance_eval do
+          def endpoint
+            '/requestpayablecasefees'
+          end
+        end
+      end
+
+      it "raises case not found for a 404" do
+        Excon.stub(
+          {
+            method: :post,
+            path: path
+          },
+          status: 404
+        )
+        expect { object.post }.to raise_error(GlimrApiClient::CaseNotFound, '404')
+      end
     end
 
     context '/glimravailable' do
