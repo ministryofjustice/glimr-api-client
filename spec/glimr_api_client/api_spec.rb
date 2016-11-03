@@ -1,12 +1,36 @@
 require 'rails_helper'
-require 'support/shared_examples_for_api_calls'
 
 RSpec.describe GlimrApiClient::Api, '#post' do
-  include_examples 'anonymous object'
-
   let(:docpath) { '/Live_API/api/tdsapi' }
-  let(:endpoint) { 'endpoint' }
-  let(:path) { [docpath, endpoint].join('/') }
+  let(:api_endpoint) { 'endpoint' }
+  let(:path) { [docpath, api_endpoint].join('/') }
+
+  # Required for run/build ordering in mutation tests.
+  let(:object) do
+    Class.new do
+      include GlimrApiClient::Api
+
+      def initialize(call = nil)
+        @call = call
+      end
+
+      def call
+        "called#{@call}"
+      end
+
+      def request_body
+        { parameter: 'parameter' }
+      end
+    end.new
+  end
+
+  before do
+    object.instance_eval do
+      def endpoint
+        '/endpoint'
+      end
+    end
+  end
 
   it 'exposes an excon client' do
     Excon.stub(
@@ -96,7 +120,15 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     end
 
     context '/paymenttaken' do
-      let(:endpoint) { 'paymenttaken' }
+      let(:api_endpoint) { 'paymenttaken' }
+
+      before do
+        object.instance_eval do
+          def endpoint
+            '/paymenttaken'
+          end
+        end
+      end
 
       it 'does not raise exceptions for 3xx range codes' do
         Excon.stub(
@@ -106,7 +138,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 399
         )
-        expect { paymenttaken_object.post }.not_to raise_error
+        expect { object.post }.not_to raise_error
       end
 
       it 'does not raise exceptions for out-of-range codes' do
@@ -117,7 +149,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 600
         )
-        expect { paymenttaken_object.post }.not_to raise_error
+        expect { object.post }.not_to raise_error
       end
 
       it 're-raises a 404 with the correct error' do
@@ -128,7 +160,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 404
         )
-        expect { paymenttaken_object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '404')
+        expect { object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '404')
       end
 
       it 're-raises a 500 with the correct error' do
@@ -139,12 +171,34 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 500
         )
-        expect { paymenttaken_object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '500')
+        expect { object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '500')
       end
+
+      context 'when the client dies' do
+        let(:excon) { class_double(Excon) }
+
+        before do
+          expect(excon).to receive(:post).and_raise(Excon::Error, 'it died')
+        end
+
+        it 'raises a payment notification exception' do
+          expect(object).to receive(:client).and_return(excon)
+          expect { object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, 'it died')
+        end
+      end
+
     end
 
     context '/registernewcase' do
-      let(:endpoint) { 'registernewcase' }
+      let(:api_endpoint) { 'registernewcase' }
+
+      before do
+        object.instance_eval do
+          def endpoint
+            '/registernewcase'
+          end
+        end
+      end
 
       it 'does not raise exceptions for 3xx range codes' do
         Excon.stub(
@@ -154,7 +208,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 399
         )
-        expect { registernewcase_object.post }.not_to raise_error
+        expect { object.post }.not_to raise_error
       end
 
       it 'does not raise exceptions for out-of-range codes' do
@@ -165,7 +219,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 600
         )
-        expect { registernewcase_object.post }.not_to raise_error
+        expect { object.post }.not_to raise_error
       end
 
       it 're-raises a 500 with the correct error' do
@@ -176,9 +230,23 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 500
         )
-        expect { registernewcase_object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, '500')
+        expect { object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, '500')
+      end
+
+      context 'when the client dies' do
+        let(:excon) { class_double(Excon) }
+
+        before do
+          expect(excon).to receive(:post).and_raise(Excon::Error, 'it died')
+        end
+
+        it 'raises a register new case exception' do
+          expect(object).to receive(:client).and_return(excon)
+          expect { object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, 'it died')
+        end
       end
     end
+
   end
 
   context 'the client dies without returning' do
@@ -193,16 +261,6 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     it 'raises an exception if the client dies' do
       expect(object).to receive(:client).and_return(excon)
       expect { object.post }.to raise_error(GlimrApiClient::Unavailable, 'it died')
-    end
-
-    it 'raises a payment notification exception if the client dies' do
-      expect(paymenttaken_object).to receive(:client).and_return(excon)
-      expect { paymenttaken_object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, 'it died')
-    end
-
-    it 'raises a register new case exception if the client dies' do
-      expect(registernewcase_object).to receive(:client).and_return(excon)
-      expect { registernewcase_object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, 'it died')
     end
   end
 end
