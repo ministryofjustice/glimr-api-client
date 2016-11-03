@@ -4,6 +4,10 @@ require 'support/shared_examples_for_api_calls'
 RSpec.describe GlimrApiClient::Api, '#post' do
   include_examples 'anonymous object'
 
+  let(:docpath) { '/Live_API/api/tdsapi' }
+  let(:endpoint) { 'endpoint' }
+  let(:path) { [docpath, endpoint].join('/') }
+
   it 'exposes an excon client' do
     Excon.stub(
       {
@@ -13,7 +17,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           "Content-Type" => "application/json",
           "Accept" => "application/json"
         },
-      path: '/Live_API/api/tdsapi/endpoint',
+      path: path,
       persistent: true
       },
       status: 200, body: { response: 'response' }.to_json
@@ -29,7 +33,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/Live_API/api/tdsapi/endpoint'
+          path: path
         },
         status: 404
       )
@@ -40,7 +44,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/Live_API/api/tdsapi/endpoint'
+          path: path
         },
         status: 500
       )
@@ -51,7 +55,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/Live_API/api/tdsapi/endpoint'
+          path: path
         },
         status: 400
       )
@@ -62,7 +66,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/Live_API/api/tdsapi/endpoint'
+          path: path
         },
         status: 399
       )
@@ -73,7 +77,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/Live_API/api/tdsapi/endpoint'
+          path: path
         },
         status: 600
       )
@@ -84,7 +88,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       Excon.stub(
         {
           method: :post,
-          path: '/Live_API/api/tdsapi/endpoint'
+          path: path
         },
         status: 599
       )
@@ -92,12 +96,13 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     end
 
     context '/paymenttaken' do
+      let(:endpoint) { 'paymenttaken' }
 
       it 'does not raise exceptions for 3xx range codes' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/paymenttaken'
+            path: path
           },
           status: 399
         )
@@ -108,7 +113,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/paymenttaken'
+            path: path
           },
           status: 600
         )
@@ -119,7 +124,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/paymenttaken'
+            path: path
           },
           status: 404
         )
@@ -130,7 +135,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/paymenttaken'
+            path: path
           },
           status: 500
         )
@@ -139,12 +144,13 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     end
 
     context '/registernewcase' do
+      let(:endpoint) { 'registernewcase' }
 
       it 'does not raise exceptions for 3xx range codes' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/registernewcase'
+            path: path
           },
           status: 399
         )
@@ -155,7 +161,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/registernewcase'
+            path: path
           },
           status: 600
         )
@@ -166,7 +172,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         Excon.stub(
           {
             method: :post,
-            path: '/Live_API/api/tdsapi/registernewcase'
+            path: path
           },
           status: 500
         )
