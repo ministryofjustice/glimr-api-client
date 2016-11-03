@@ -119,6 +119,29 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '599')
     end
 
+    context '/glimravailable' do
+      let(:api_endpoint) { 'glimravailable' }
+
+      before do
+        object.instance_eval do
+          def endpoint
+            '/glimravailable'
+          end
+        end
+      end
+
+      it "raises unavailable for a 404" do
+        Excon.stub(
+          {
+            method: :post,
+            path: path
+          },
+          status: 404
+        )
+        expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '404')
+      end
+    end
+
     context '/paymenttaken' do
       let(:api_endpoint) { 'paymenttaken' }
 

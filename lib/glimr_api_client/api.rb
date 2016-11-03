@@ -27,7 +27,11 @@ module GlimrApiClient
     end
 
     def handle_response_errors(resp)
-      if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
+      if (endpoint.eql?('/glimravailable') && resp.status.equal?(404))
+        raise Unavailable, resp.status
+        # if /requestpayablecasefees gives a 404, raise casenotfound
+        # otherwise, re-raise whatever
+      elsif (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
         raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
         re_raise_error(endpoint, resp.status)
