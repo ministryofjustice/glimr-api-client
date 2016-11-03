@@ -60,8 +60,9 @@ RSpec.shared_examples 'no new fees are due' do |case_number, _confirmation_code|
     {
       'jurisdictionId' => 8,
       'tribunalCaseId' => 60_029,
-      'caseTitle' => 'You vs HM Revenue & Customs',
-      'feeLiabilities' => []
+      'feeLiabilities' => [
+        'caseTitle' => 'You vs HM Revenue & Customs'
+      ]
     }
   }
 
@@ -82,9 +83,9 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, confirmation_
     {
       'jurisdictionId' => 8,
       'tribunalCaseId' => 60_029,
-      'caseTitle' => 'You vs HM Revenue & Customs',
       'feeLiabilities' =>
       [{ 'feeLiabilityId' => '7',
+         'caseTitle' => 'You vs HM Revenue & Customs',
          'onlineFeeTypeDescription' => 'Lodgement Fee',
          'payableWithUnclearedInPence' => '2000' }]
     }.to_json
@@ -104,25 +105,20 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, confirmation_
   end
 end
 
-RSpec.shared_examples 'no fees then a £20 fee' do |case_number, _confirmation_code|
+RSpec.shared_examples 'two fees' do |case_number, _confirmation_code|
   let(:no_fees) {
     {
       'jurisdictionId' => 8,
       'tribunalCaseId' => 60_029,
-      'caseTitle' => 'You vs HM Revenue & Customs',
-      'feeLiabilities' => []
-    }
-  }
-
-  let(:twenty_pound_fee) {
-    {
-      'jurisdictionId' => 8,
-      'tribunalCaseId' => 60_029,
-      'caseTitle' => 'You vs HM Revenue & Customs',
       'feeLiabilities' =>
-      [{ 'feeLiabilityId' => 7,
+      [{ 'feeLiabilityId' => '7',
+         'caseTitle' => 'First Title',
          'onlineFeeTypeDescription' => 'Lodgement Fee',
-         'payableWithUnclearedInPence' => 2000 }]
+         'payableWithUnclearedInPence' => '2000' },
+       { 'feeLiabilityId' => '7',
+         'caseTitle' => 'Second Title',
+         'onlineFeeTypeDescription' => 'Another Fee',
+         'payableWithUnclearedInPence' => '2000' }]
     }
   }
 
@@ -131,20 +127,32 @@ RSpec.shared_examples 'no fees then a £20 fee' do |case_number, _confirmation_c
       {
         method: :post,
         host: 'glimr-api.taxtribunals.dsd.io',
-        body: /caseNumber=#{CGI.escape(case_number)}/,
+        body: "{\"jurisdictionId\":8,\"caseNumber\":\"#{case_number}\",\"confirmationCode\":\"ABC123\"}",
         path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
       status: 200, body: no_fees.to_json
     )
+  end
+end
 
+RSpec.shared_examples 'no fees' do |case_number, _confirmation_code|
+  let(:no_fees) {
+    {
+      'jurisdictionId' => 8,
+      'tribunalCaseId' => 60_029,
+      'feeLiabilities' => []
+    }
+  }
+
+  before do
     Excon.stub(
       {
         method: :post,
         host: 'glimr-api.taxtribunals.dsd.io',
-        body: /caseNumber=#{CGI.escape(case_number)}/,
+        body: "{\"jurisdictionId\":8,\"caseNumber\":\"#{case_number}\",\"confirmationCode\":\"ABC123\"}",
         path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
-      status: 200, body: twenty_pound_fee.to_json
+      status: 200, body: no_fees.to_json
     )
   end
 end
