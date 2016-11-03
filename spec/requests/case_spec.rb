@@ -6,10 +6,8 @@ RSpec.describe GlimrApiClient::Case do
 
   subject { described_class.find('TT/2016/00001', 'ABC123') }
 
-  describe '#title' do
-    it 'returns the title' do
-      expect(subject.title).to eq('Missing Title')
-    end
+  it 'returns "Missing Title" when there are no fees' do
+    expect(subject.title).to eq('Missing Title')
   end
 end
 
@@ -18,10 +16,8 @@ RSpec.describe GlimrApiClient::Case do
 
   subject { described_class.find('TT/2016/00001', 'ABC123') }
 
-  describe '#title' do
-    it 'returns the title from the first fee' do
-      expect(subject.title).to eq('First Title')
-    end
+  it 'returns the title from the first fee' do
+    expect(subject.title).to eq('First Title')
   end
 end
 
@@ -35,10 +31,8 @@ RSpec.describe GlimrApiClient::Case do
 
   subject { described_class.find('TT/2016/00001', 'ABC123') }
 
-  describe '#title' do
-    it 'returns the title' do
-      expect(subject.title).to eq('You vs HM Revenue & Customs')
-    end
+  it 'returns the title' do
+    expect(subject.title).to eq('You vs HM Revenue & Customs')
   end
 
   describe '#fees' do
