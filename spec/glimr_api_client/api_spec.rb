@@ -140,6 +140,17 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         )
         expect { object.post }.to raise_error(GlimrApiClient::CaseNotFound, '404')
       end
+
+      it "raises unavailable for a 500" do
+        Excon.stub(
+          {
+            method: :post,
+            path: path
+          },
+          status: 500
+        )
+        expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '500')
+      end
     end
 
     context '/glimravailable' do
