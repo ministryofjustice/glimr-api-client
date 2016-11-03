@@ -4,7 +4,6 @@ module GlimrApiClient
   module Api
     def post
       client("#{api_url}#{endpoint}").post(body: request_body.to_json).tap { |resp|
-        # Only timeouts and network issues raise errors.
         handle_response_errors(resp)
         @body = resp.body
       }
@@ -26,8 +25,9 @@ module GlimrApiClient
                 'https://glimr-api.taxtribunals.dsd.io/Live_API/api/tdsapi')
     end
 
+    # Only timeouts and network issues raise errors.
     def handle_response_errors(resp)
-      if (!endpoint.eql?('/paymenttaken') && resp.status.equal?(404))
+      if resp.status.equal?(404) && endpoint.eql?('/requestpayablecasefees')
         raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
         re_raise_error(endpoint, resp.status)

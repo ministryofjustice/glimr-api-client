@@ -29,7 +29,7 @@ RSpec.describe GlimrApiClient::Update do
 
   it 'allows access to the response_body' do
     # Because it doesn't have a specific accessor for the response data.
-    expect(subject.response_body).not_to be_blank
+    expect(subject.response_body).not_to be_empty
   end
 
   it 'complains if the amount is missing' do

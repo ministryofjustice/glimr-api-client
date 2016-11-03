@@ -9,9 +9,9 @@ module GlimrApiClient
     def check_request!
       errors = []
       [:feeLiabilityId, :paymentReference, :govpayReference, :paidAmountInPence].each do |required|
-        errors << required if request_body.fetch(required).blank?
+        errors << required if request_body.fetch(required).nil?
       end
-      raise RequestError, errors unless errors.blank?
+      raise RequestError, errors unless errors.empty?
     end
 
     def endpoint
