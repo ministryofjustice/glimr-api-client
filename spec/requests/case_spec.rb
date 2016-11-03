@@ -2,6 +2,30 @@ require 'rails_helper'
 require 'support/shared_examples_for_glimr'
 
 RSpec.describe GlimrApiClient::Case do
+  include_examples 'no fees', 'TT/2016/00001', 'ABC123'
+
+  subject { described_class.find('TT/2016/00001', 'ABC123') }
+
+  describe '#title' do
+    it 'returns the title' do
+      expect(subject.title).to eq('Missing Title')
+    end
+  end
+end
+
+RSpec.describe GlimrApiClient::Case do
+  include_examples 'two fees', 'TT/2016/00001', 'ABC123'
+
+  subject { described_class.find('TT/2016/00001', 'ABC123') }
+
+  describe '#title' do
+    it 'returns the title from the first fee' do
+      expect(subject.title).to eq('First Title')
+    end
+  end
+end
+
+RSpec.describe GlimrApiClient::Case do
   include_examples 'a case fee of £20 is due', 'TT/2016/00001', 'ABC123'
 
   it 'requires two parameters' do
@@ -24,7 +48,8 @@ RSpec.describe GlimrApiClient::Case do
           OpenStruct.new(
             glimr_id: 7,
             description: 'Lodgement Fee',
-            amount: 2000
+            amount: 2000,
+            case_title: 'You vs HM Revenue & Customs'
           )
         ]
       )

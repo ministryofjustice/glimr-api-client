@@ -19,7 +19,19 @@ module GlimrApiClient
     end
 
     def title
-      @title ||= response_body.fetch(:caseTitle)
+      # This should be;
+      #
+      #   @title ||= response_body.fetch(:caseTitle)
+      #
+      # But, a change in the Glimr API means that the title is
+      # currently being returned with each fee liability. So,
+      # for the time being, we will fetch it from there.
+      # I'm leaving the "Missing Title" text so that nobody forgets
+      # that this needs to be fixed, preferably by changing the
+      # Glimr RequestPayableCaseFees API call back to returning
+      # caseTitle at the top-level of the response data.
+
+      @title ||= fees.any? ? fees.first.case_title : "Missing Title"
     end
 
     def fees
@@ -27,7 +39,8 @@ module GlimrApiClient
         OpenStruct.new(
           glimr_id: Integer(fee.fetch(:feeLiabilityId)),
           description: fee.fetch(:onlineFeeTypeDescription),
-          amount: Integer(fee.fetch(:payableWithUnclearedInPence))
+          amount: Integer(fee.fetch(:payableWithUnclearedInPence)),
+          case_title: fee.fetch(:caseTitle)
         )
       end
     end
