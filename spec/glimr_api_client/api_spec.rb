@@ -6,7 +6,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
   let(:path) { [docpath, api_endpoint].join('/') }
 
   # Required for run/build ordering in mutation tests.
-  let(:object) do
+  let(:glimr_method_class) do
     Class.new do
       include GlimrApiClient::Api
 
@@ -25,7 +25,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
   end
 
   before do
-    object.instance_eval do
+    glimr_method_class.instance_eval do
       def endpoint
         '/endpoint'
       end
@@ -46,7 +46,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       },
       status: 200, body: { response: 'response' }.to_json
     )
-    object.tap do |o|
+    glimr_method_class.tap do |o|
       expect { o.post }.not_to raise_error
       expect(o.response_body).to eq({ response: 'response' })
     end
@@ -61,7 +61,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 404
       )
-      expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '404')
+      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '404')
     end
 
     it 'raises an exception when it receives a 500' do
@@ -72,7 +72,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 500
       )
-      expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '500')
+      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '500')
     end
 
     it 'raises an exception when it receives a 400' do
@@ -83,7 +83,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 400
       )
-      expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '400')
+      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '400')
     end
 
     it 'does not raise exceptions for 3xx range codes' do
@@ -94,7 +94,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 399
       )
-      expect { object.post }.not_to raise_error
+      expect { glimr_method_class.post }.not_to raise_error
     end
 
     it 'does not raise exceptions for out-of-range codes' do
@@ -105,7 +105,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 600
       )
-      expect { object.post }.not_to raise_error
+      expect { glimr_method_class.post }.not_to raise_error
     end
 
     it 'raises an exception when it receives a 599' do
@@ -116,14 +116,14 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         status: 599
       )
-      expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '599')
+      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '599')
     end
 
     context '/requestpayablecasefees' do
       let(:api_endpoint) { 'requestpayablecasefees' }
 
       before do
-        object.instance_eval do
+        glimr_method_class.instance_eval do
           def endpoint
             '/requestpayablecasefees'
           end
@@ -138,7 +138,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 404
         )
-        expect { object.post }.to raise_error(GlimrApiClient::CaseNotFound, '404')
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::CaseNotFound, '404')
       end
 
       it "raises unavailable for a 500" do
@@ -149,7 +149,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 500
         )
-        expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '500')
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '500')
       end
     end
 
@@ -157,7 +157,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       let(:api_endpoint) { 'glimravailable' }
 
       before do
-        object.instance_eval do
+        glimr_method_class.instance_eval do
           def endpoint
             '/glimravailable'
           end
@@ -172,7 +172,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 404
         )
-        expect { object.post }.to raise_error(GlimrApiClient::Unavailable, '404')
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '404')
       end
     end
 
@@ -180,7 +180,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       let(:api_endpoint) { 'paymenttaken' }
 
       before do
-        object.instance_eval do
+        glimr_method_class.instance_eval do
           def endpoint
             '/paymenttaken'
           end
@@ -195,7 +195,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 399
         )
-        expect { object.post }.not_to raise_error
+        expect { glimr_method_class.post }.not_to raise_error
       end
 
       it 'does not raise exceptions for out-of-range codes' do
@@ -206,7 +206,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 600
         )
-        expect { object.post }.not_to raise_error
+        expect { glimr_method_class.post }.not_to raise_error
       end
 
       it 're-raises a 404 with the correct error' do
@@ -217,7 +217,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 404
         )
-        expect { object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '404')
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '404')
       end
 
       it 're-raises a 500 with the correct error' do
@@ -228,7 +228,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 500
         )
-        expect { object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '500')
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, '500')
       end
 
       context 'when the client dies' do
@@ -239,8 +239,8 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         end
 
         it 'raises a payment notification exception' do
-          expect(object).to receive(:client).and_return(excon)
-          expect { object.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, 'it died')
+          expect(glimr_method_class).to receive(:client).and_return(excon)
+          expect { glimr_method_class.post }.to raise_error(GlimrApiClient::PaymentNotificationFailure, 'it died')
         end
       end
 
@@ -250,7 +250,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       let(:api_endpoint) { 'registernewcase' }
 
       before do
-        object.instance_eval do
+        glimr_method_class.instance_eval do
           def endpoint
             '/registernewcase'
           end
@@ -265,7 +265,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 399
         )
-        expect { object.post }.not_to raise_error
+        expect { glimr_method_class.post }.not_to raise_error
       end
 
       it 'does not raise exceptions for out-of-range codes' do
@@ -276,7 +276,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 600
         )
-        expect { object.post }.not_to raise_error
+        expect { glimr_method_class.post }.not_to raise_error
       end
 
       it 're-raises a 500 with the correct error' do
@@ -287,7 +287,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           },
           status: 500
         )
-        expect { object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, '500')
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, '500')
       end
 
       context 'when the client dies' do
@@ -298,8 +298,8 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         end
 
         it 'raises a register new case exception' do
-          expect(object).to receive(:client).and_return(excon)
-          expect { object.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, 'it died')
+          expect(glimr_method_class).to receive(:client).and_return(excon)
+          expect { glimr_method_class.post }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, 'it died')
         end
       end
     end
@@ -316,8 +316,8 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     end
 
     it 'raises an exception if the client dies' do
-      expect(object).to receive(:client).and_return(excon)
-      expect { object.post }.to raise_error(GlimrApiClient::Unavailable, 'it died')
+      expect(glimr_method_class).to receive(:client).and_return(excon)
+      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, 'it died')
     end
   end
 end
