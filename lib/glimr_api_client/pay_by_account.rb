@@ -28,5 +28,27 @@ module GlimrApiClient
     def endpoint
       '/pbapaymentrequest'
     end
+
+    # rubocop:disable Metrics/CyclomaticComplexity:
+    def re_raise_error(_docpath, _error, body)
+      body = {} unless body.instance_of?(Hash)
+      case body.fetch(:glimrerrorcode, nil)
+      when 511 #/FeeLiability not found for FeeLiabilityID/
+        raise FeeLiabilityNotFound
+      when 512 #/PBA account \w+ not found/
+        raise PBAAccountNotFound
+      when 513 #/Invalid PBAAccountNumber\/PBAConfirmationCode combination/
+        raise InvalidPBAAccountAndConfirmation
+      when 514 #/Invalid AmountToPay/
+        raise PBAInvalidAmount
+      when 521 #/PBAGlobalStatus is inactive/
+        raise PBAGlobalStatusInactive
+      when 522  #/PBAJurisdictionStatus is inactive/
+        raise PBAJurisdictionStatusInactive
+      else
+        raise PBAUnspecifiedError
+      end
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity:
   end
 end

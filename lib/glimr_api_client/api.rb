@@ -8,7 +8,7 @@ module GlimrApiClient
         @body = resp.body
       }
     rescue Excon::Error => e
-      re_raise_error(endpoint, e)
+      re_raise_error(endpoint, e, {})
     end
 
     def response_body
@@ -30,18 +30,20 @@ module GlimrApiClient
       if resp.status.equal?(404) && endpoint.eql?('/requestpayablecasefees')
         raise CaseNotFound, resp.status
       elsif (400..599).cover?(resp.status)
-        re_raise_error(endpoint, resp.status)
+        re_raise_error(endpoint, resp.status, resp.body)
       end
     end
 
-    def re_raise_error(docpath, e)
+    def re_raise_error(docpath, e, body = nil)
+      body = {} unless body.instance_of?(Hash)
+      error = body.fetch(:message, e)
       case docpath
       when '/paymenttaken'
-        raise PaymentNotificationFailure, e
+        raise PaymentNotificationFailure, error
       when '/registernewcase'
-        raise RegisterNewCaseFailure, e
+        raise RegisterNewCaseFailure, error
       else
-        raise Unavailable, e
+        raise Unavailable, error
       end
     end
 

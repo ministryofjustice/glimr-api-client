@@ -41,8 +41,8 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           "Content-Type" => "application/json",
           "Accept" => "application/json"
         },
-      path: path,
-      persistent: true
+        path: path,
+        persistent: true
       },
       status: 200, body: { response: 'response' }.to_json
     )
@@ -318,6 +318,28 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     it 'raises an exception if the client dies' do
       expect(glimr_method_class).to receive(:client).and_return(excon)
       expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, 'it died')
+    end
+  end
+
+  context 'errors' do
+    let(:body) {
+      {
+        glimrerrorcode: 123,
+        message: 'Some Glimr Error'
+      }
+    }
+
+    let(:post_response) { double(status: 404, body: body) }
+    let(:excon) { class_double(Excon, post: post_response) }
+
+    before do
+      allow(glimr_method_class).to receive(:client).and_return(excon)
+    end
+
+    describe 'Unspecified error' do
+      it 'raises an error' do
+        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, 'Some Glimr Error')
+      end
     end
   end
 end
