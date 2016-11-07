@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe GlimrApiClient::PayByAccount do
   let(:params) { {} }
-  let(:excon) { class_double(Excon, post: double(status: 200, body: '')) }
+  let(:post_response) { double(status: 200, body: '') }
+  let(:excon) { class_double(Excon, post: post_response) }
 
   before do
     allow_any_instance_of(described_class).to receive(:client).and_return(excon)
@@ -113,5 +114,23 @@ RSpec.describe GlimrApiClient::PayByAccount do
       expect(excon).to receive(:post).with(post_params)
       described_class.call(params)
     end
+
+    describe '#response_body' do
+      let(:response) {
+        {
+          feeLiabilityId: 123456789,
+          feeTransactionId: 123456789,
+          amountToPayInPence: 9999
+        }
+      }
+      # This overrides the double at the beginning and is returned by the
+      # excon client stub, also declared at the beginning.
+      let(:post_response) { double(status: 200, body: response.to_json) }
+
+      it 'returns the response as a hash' do
+        expect(described_class.call(params).response_body).to eq(response)
+      end
+    end
   end
+
 end
