@@ -1,7 +1,9 @@
 module GlimrApiClient
   class RegisterNewCase < Base
+    attr_reader :request_body
+
     def initialize(params)
-      @params = params
+      @request_body = params
     end
 
     private
@@ -19,10 +21,6 @@ module GlimrApiClient
 
     def endpoint
       '/registernewcase'
-    end
-
-    def request_body
-      @params
     end
   end
 end
