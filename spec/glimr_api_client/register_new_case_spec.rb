@@ -1,15 +1,12 @@
 require 'rails_helper'
-require 'support/shared_examples_for_glimr'
 
 RSpec.describe GlimrApiClient::RegisterNewCase do
-  include_examples 'register new case with glimr'
-
   let(:params) { {} }
   let(:excon) { class_double(Excon, post: double(status: 200, body: '')) }
   let(:api) { described_class.new(params) }
 
   before do
-    allow(api).to receive(:client).and_return(excon)
+    allow_any_instance_of(described_class).to receive(:client).and_return(excon)
   end
 
   context 'validating parameters' do
@@ -35,7 +32,7 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
       end
     end
 
-    it 'does not barf when required parameters are provided' do
+    it 'does not raise an error when required parameters are provided' do
       expect { described_class.call(valid_params) }.not_to raise_error
     end
   end
