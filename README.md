@@ -23,6 +23,40 @@ Check if the GLiMR API is available.  Raises
 `GlimrApiClient::Unavailable` if anything other than a positive response
 is received; this includes network errors and timeouts.
 
+### Find a case
+
+```ruby
+  GlimrApiClient::Case.find(<case reference>)
+```
+
+Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
+Tribunals, for example). `#title` returns case title from GLiMR, and `#fees`
+returns an array of anonymous objects (OpenStructs) detailing any
+outstanding fees. Each fee object responds to `#glimr_id`,
+`#description`, and `#amount`.
+
+Please note that `#amount` returns the amount in pence.
+
+If a case is not found, the client will raise `GlimrApiClient::CaseNotFound`.
+
+### Pay by Account
+
+```ruby
+  GlimrApiClient::PayByAccount.call(<params>)
+```
+
+Pay tribunal fees with a Pay By Account reference.
+
+Params are as follows:
+
+```ruby
+  feeLiabilityId: 123456789
+  pbaAccountNumber: "PBA1234567"
+  pbaConfirmationCode: "AC-D3-46" or "ACD346" - Glimr accepts hyphens
+  pbaTransactionReference: User's own reference. Max of 240 characters
+  amountToPayInPence: 9999f
+```
+
 ### Register a New Case
 
 ```ruby
@@ -62,40 +96,6 @@ Accepts the following parameters:
 ```
 
 Currently only `jurisdictionId` and `onlineMappingCode` are mandatory.
-
-### Find a case
-
-```ruby
-  GlimrApiClient::Case.find(<case reference>)
-```
-
-Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
-Tribunals, for example). `#title` returns case title from GLiMR, and `#fees`
-returns an array of anonymous objects (OpenStructs) detailing any
-outstanding fees. Each fee object responds to `#glimr_id`,
-`#description`, and `#amount`.
-
-Please note that `#amount` returns the amount in pence.
-
-If a case is not found, the client will raise `GlimrApiClient::CaseNotFound`.
-
-### Pay by Account
-
-```ruby
-  GlimrApiClient::PayByAccount.call(<params>)
-```
-
-Pay tribunal fees with a Pay By Account reference.
-
-Params are as follows:
-
-```ruby
-  feeLiabilityId: 123456789
-  pbaAccountNumber: "PBA1234567"
-  pbaConfirmationCode: "AC-D3-46" or "ACD346" - Glimr accepts hyphens
-  pbaTransactionReference: User's own reference. Max of 240 characters
-  amountToPayInPence: 9999f
-```
 
 ### Update a case, mark as paid
 
