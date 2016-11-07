@@ -23,21 +23,61 @@ Check if the GLiMR API is available.  Raises
 `GlimrApiClient::Unavailable` if anything other than a positive response
 is received; this includes network errors and timeouts.
 
-### Find a case
+### Register a New Case
 
 ```ruby
-GlimrApiClient::Case.find(<case reference>)
+GlimrApiClient::RegisterNewCase.call(<case parameters>)
 ```
 
-Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
-Tribunals, for example). `#title` returns case title from GLiMR, and `#fees`
-returns an array of anonymous objects (OpenStructs) detailing any
-outstanding fees. Each fee object responds to `#glimr_id`,
-`#description`, and `#amount`.
+Accepts the following parameters:
 
-Please note that `#amount` returns the amount in pence.
+```ruby
+  jurisdictionId: 8,
+  onlineMappingCode: 'something',
+  contactPhone: '1234',
+  contactFax: '5678',
+  contactEmail: 'foo_at_bar.com',
+  contactPreference: 'Email',
+  contactFirstName: 'Alice',
+  contactLastName: 'Caroll',
+  contactStreet1: '5_Wonderstreet',
+  contactStreet2: 'contact_street_2',
+  contactStreet3: 'contact_street_3',
+  contactStreet4: 'contact_street_4',
+  contactCity: 'London',
+  documentsURL: 'http...google.com',
+  repPhone: '7890',
+  repFax: '6789',
+  repEmail: 'bar_at_baz.com',
+  repPreference: 'Fax',
+  repReference: 'MYREF',
+  repIsAuthorised: 'Yes',
+  repOrganisationName: 'Acme._Ltd.',
+  repFAO: 'Bob_Hope',
+  repStreet1: '5_Repstreet',
+  repStreet2: 'Repton',
+  repStreet3: 'Repshire',
+  repStreet4: 'Rep_st._4',
+  repCity: 'City_of_reps'
+```
 
-If a case is not found, the client will raise `GlimrApiClient::CaseNotFound`.
+Currently only `jurisdictionId` and `onlineMappingCode` are mandatory.
+
+### Find a case
+
+  ```ruby
+GlimrApiClient::Case.find(<case reference>)
+  ```
+
+  Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
+      Tribunals, for example). `#title` returns case title from GLiMR, and `#fees`
+  returns an array of anonymous objects (OpenStructs) detailing any
+  outstanding fees. Each fee object responds to `#glimr_id`,
+  `#description`, and `#amount`.
+
+  Please note that `#amount` returns the amount in pence.
+
+  If a case is not found, the client will raise `GlimrApiClient::CaseNotFound`.
 
 ### Update a case, mark as paid
 
