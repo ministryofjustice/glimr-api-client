@@ -11,7 +11,7 @@ RSpec.describe GlimrApiClient::PayByAccount do
     }
   }
 
-  let(:post_response) { double(status: 200, body: '') }
+  let(:post_response) { double(status: 200, body: {}) }
   let(:excon) { class_double(Excon, post: post_response) }
 
   before do
@@ -123,8 +123,8 @@ RSpec.describe GlimrApiClient::PayByAccount do
   end
 
   context 'errors' do
-    let(:body) { '' }
-    let(:post_response) { double(status: 404, body: body) }
+    let(:body) { { message: '' } }
+    let(:post_response) { double(status: 404, body: body.to_json) }
 
     # Error codes 501 to 505 *should* be covered by the validations, so they
     # are not processed here.
@@ -132,12 +132,15 @@ RSpec.describe GlimrApiClient::PayByAccount do
       let(:body) {
         {
           glimrerrorcode: 511,
-          message: 'FeeLiabFeeLiability not found for FeeLiabilityID 123456789'
+          # Truncated for brevity
+          message: 'Not found'
         }
       }
 
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::FeeLiabilityNotFound)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::FeeLiabilityNotFound, 'Not found')
       end
     end
 
@@ -149,12 +152,15 @@ RSpec.describe GlimrApiClient::PayByAccount do
       let(:body) {
         {
           glimrerrorcode: 512,
-          message: 'PBA account PBA1234567 not found'
+          # Truncated for brevity
+          message: 'Not found'
         }
       }
 
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::PBAAccountNotFound)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::PayByAccount::AccountNotFound, 'Not found')
       end
     end
 
@@ -162,12 +168,15 @@ RSpec.describe GlimrApiClient::PayByAccount do
       let(:body) {
         {
           glimrerrorcode: 513,
-          message: 'Invalid PBAAccountNumber/PBAConfirmationCode combination PBA1234567 / ACD346'
+          # Truncated for brevity
+          message: 'Invalid AccountNumber'
         }
       }
 
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::InvalidPBAAccountAndConfirmation)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::PayByAccount::InvalidAccountAndConfirmation, 'Invalid AccountNumber')
       end
     end
 
@@ -175,12 +184,15 @@ RSpec.describe GlimrApiClient::PayByAccount do
       let(:body) {
         {
           glimrerrorcode: 514,
-          message: 'Invalid AmountToPay 9999'
+          # Truncated for brevity
+          message: 'Invalid Amount'
         }
       }
 
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::PBAInvalidAmount)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::PayByAccount::InvalidAmount, 'Invalid Amount')
       end
     end
 
@@ -189,12 +201,15 @@ RSpec.describe GlimrApiClient::PayByAccount do
       let(:body) {
         {
           glimrerrorcode: 521,
-          message: 'PBAGlobalStatus is inactive'
+          # Truncated for brevity
+          message: 'PBAGlobalStatus'
         }
       }
 
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::PBAGlobalStatusInactive)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::PayByAccount::GlobalStatusInactive, 'PBAGlobalStatus')
       end
     end
 
@@ -203,18 +218,29 @@ RSpec.describe GlimrApiClient::PayByAccount do
       let(:body) {
         {
           glimrerrorcode: 522,
-          message: 'PBAJurisdictionStatus is inactive'
+          # Truncated for brevity
+          message: 'Jurisdiction'
         }
       }
 
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::PBAJurisdictionStatusInactive)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::PayByAccount::JurisdictionStatusInactive, 'Jurisdiction')
       end
     end
 
-    describe 'Unspecificed PBA error' do
+    describe 'Unspecified error' do
+      let(:body) {
+        {
+          message: 'Kaboom'
+        }
+      }
+
       it 'raises an error' do
-        expect { described_class.call(params) }.to raise_error(GlimrApiClient::PBAUnspecifiedError)
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::Unavailable, 'Kaboom')
       end
     end
   end

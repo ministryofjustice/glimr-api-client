@@ -18,6 +18,23 @@ module GlimrApiClient
       '/paymenttaken'
     end
 
+    def re_raise_error(body)
+      error = body.fetch(:message, nil)
+      case body.fetch(:glimrerrorcode, nil)
+      when 311 # FeeLiability not found
+        raise FeeLiabilityNotFound, error
+      when 312 # Invalid format for PaymentReference
+        raise PaymentReferenceFormatInvalid, error
+      when 314 # Invalid format for GovPayReference
+        raise GovPayReferenceFormatInvalid, error
+      when 315 # Invalid PaidAmount
+        raise AmountInvalid, error
+      when 321 # GovPay reference already exists on system
+        raise GovPayReferenceExistsOnSystem, error
+      end
+      super(message: error)
+    end
+
     def request_body
       {
         feeLiabilityId: @fee.glimr_id,

@@ -25,20 +25,6 @@ RSpec.feature 'Request a brand new case' do
       end
     end
 
-    describe 'and glimr returns an error' do
-      include_examples 'generic glimr response',
-        case_number,
-        confirmation_code,
-        418,
-        glimrerrorcode: 418, message: 'I’m a teapot'
-
-      scenario 'then we do not show the fee' do
-        make_a_case_request
-        # TODO: This is not ideal.  It should alert the user to the failure.
-        expect(page).to have_text('service is currently unavailable')
-      end
-    end
-
     describe 'and glimr times out' do
       let(:excon) {
         class_double(Excon)
@@ -66,7 +52,7 @@ RSpec.feature 'Request a brand new case' do
         fill_in 'case_request_case_reference', with: case_number
         fill_in 'case_request_confirmation_code', with: confirmation_code
         click_on 'Find case'
-      }.to raise_error(GlimrApiClient::CaseNotFound)
+      }.to raise_error(GlimrApiClient::Case::NotFound)
     end
   end
 
@@ -80,7 +66,7 @@ RSpec.feature 'Request a brand new case' do
         fill_in 'case_request_case_reference', with: 'TC/2016/00001'
         fill_in 'case_request_confirmation_code', with: 'ABC123'
         click_on 'Find case'
-      }.to raise_error(GlimrApiClient::CaseNotFound)
+      }.to raise_error(GlimrApiClient::Case::NotFound)
     end
   end
 end
