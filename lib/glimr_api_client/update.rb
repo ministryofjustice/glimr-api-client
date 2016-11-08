@@ -1,15 +1,31 @@
 module GlimrApiClient
+  # TODO: rename so it follow api spec
   class Update < Base
-    def initialize(fee)
-      @fee = fee
+    class FeeLiabilityNotFound < StandardError; end
+    class PaymentReferenceFormatInvalid < StandardError; end
+    class GovPayReferenceFormatInvalid < StandardError; end
+    class AmountInvalid < StandardError; end
+    class GovPayReferenceExistsOnSystem < StandardError; end
+
+    # TODO: Move this and initialize into Base. It's the same for all but Case.
+    attr_reader :request_body
+
+    def initialize(params)
+      @request_body = params
     end
 
     private
 
+    # TODO: Set the attributes in a constant and move this to Base.
     def check_request!
       errors = []
-      [:feeLiabilityId, :paymentReference, :govpayReference, :paidAmountInPence].each do |required|
-        errors << required if request_body.fetch(required).nil?
+      [
+        :feeLiabilityId,
+        :paymentReference,
+        :govpayReference,
+        :paidAmountInPence
+      ].each do |required|
+        errors << required if request_body.fetch(required, nil).nil?
       end
       raise RequestError, errors unless errors.empty?
     end
@@ -33,15 +49,6 @@ module GlimrApiClient
         raise GovPayReferenceExistsOnSystem, error
       end
       super(message: error)
-    end
-
-    def request_body
-      {
-        feeLiabilityId: @fee.glimr_id,
-        paymentReference: @fee.govpay_reference,
-        govpayReference: @fee.govpay_payment_id,
-        paidAmountInPence: @fee.amount
-      }
     end
   end
 end

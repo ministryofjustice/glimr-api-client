@@ -1,4 +1,5 @@
 module GlimrApiClient
+  # TODO: rename so it follow api spec
   class Case
     class NotFound < StandardError; end
     class InvalidCaseNumber < StandardError; end
