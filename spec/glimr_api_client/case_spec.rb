@@ -66,7 +66,7 @@ RSpec.describe GlimrApiClient::Case do
     # represent a placeholder for an arbitrary value. I'm reproducing them here
     # to make it easier to link the descriptions with the error code table in
     # the spec.
-    describe 'error 212 - TribunalCase for CaseNubmer {0} not found' do
+    describe 'error 212 - TribunalCase for CaseNumber {0} not found' do
       let(:body) {
         {
           glimrerrorcode: 212,
