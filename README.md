@@ -9,9 +9,14 @@ use in various UK tribunals.
 
 ### Configuration
 
-The gem expects a `GLIMR_API_URL` environment variable, providing the endpoint at which the API can be found. This will be something like; `https://glimr-api.taxtribunals.dsd.io`
+The gem expects a `GLIMR_API_URL` environment variable, providing the
+endpoint at which the API can be found. This will be something like;
+`https://glimr-api.taxtribunals.dsd.io`
 
 This URL must be accessible from wherever your code is running.
+
+If you need to set the api time, use the `GLIMR_API_TIMEOUT_SECONDS`
+environment variable.  This defaults to 5 seconds.
 
 ### Check Availablity
 

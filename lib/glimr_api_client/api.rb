@@ -49,7 +49,8 @@ module GlimrApiClient
           'Content-Type' => 'application/json',
           'Accept' => 'application/json'
         },
-        persistent: true
+        persistent: true,
+        read_timeout: ENV.fetch('GLIMR_API_TIMEOUT_SECONDS', 5)
       )
     end
   end

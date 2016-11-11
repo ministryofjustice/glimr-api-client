@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe GlimrApiClient::Api, '#post' do
   let(:docpath) { '/Live_API/api/tdsapi' }
@@ -42,7 +42,8 @@ RSpec.describe GlimrApiClient::Api, '#post' do
           "Accept" => "application/json"
         },
         path: path,
-        persistent: true
+        persistent: true,
+        read_timeout: 5
       },
       status: 200, body: { response: 'response' }.to_json
     )
