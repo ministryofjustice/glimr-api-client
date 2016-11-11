@@ -141,7 +141,7 @@ RSpec.describe GlimrApiClient::PayByAccount do
       it 'raises an error' do
         expect {
           described_class.call(params)
-        }.to raise_error(GlimrApiClient::FeeLiabilityNotFound, 'Not found')
+        }.to raise_error(GlimrApiClient::PayByAccount::FeeLiabilityNotFound, 'Not found')
       end
     end
 
