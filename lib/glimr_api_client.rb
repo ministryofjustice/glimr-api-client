@@ -7,6 +7,7 @@ require 'glimr_api_client/case'
 require 'glimr_api_client/update'
 require 'glimr_api_client/register_new_case'
 require 'glimr_api_client/pay_by_account'
+require 'glimr_api_client/hwf_requested'
 
 
 module GlimrApiClient

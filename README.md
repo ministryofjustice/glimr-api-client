@@ -59,7 +59,23 @@ Params are as follows:
   pbaAccountNumber: "PBA1234567"
   pbaConfirmationCode: "AC-D3-46" or "ACD346" - Glimr accepts hyphens
   pbaTransactionReference: User's own reference. Max of 240 characters
-  amountToPayInPence: 9999f
+  amountToPayInPence: 9999
+```
+
+### Help With Fees Request
+
+```ruby
+  GlimrApiClient::HwfRequested.call(<params>)
+```
+
+Pay tribunal fees with a Help With Fees reference.
+
+Params are as follows:
+
+```ruby
+  feeLiabilityId: 123456789
+  hwfRequestReference: ABCD12345
+  amountToPayInPence: 9999
 ```
 
 ### Register a New Case
