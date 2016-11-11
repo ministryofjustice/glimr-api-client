@@ -23,24 +23,31 @@ module GlimrApiClient
       self
     end
 
+    # Case title is returned with each fee liability, rather than as a top-level
+    # attribute of the case. If there are any unpaid fee liabilities, we want to
+    # take the title from the first of these (because that is the most relevant
+    # title)
     def title
-      # This should be;
-      #
-      #   @title ||= response_body.fetch(:caseTitle)
-      #
-      # But, a change in the Glimr API means that the title is
-      # currently being returned with each fee liability. So,
-      # for the time being, we will fetch it from there.
-      # I'm leaving the "Missing Title" text so that nobody forgets
-      # that this needs to be fixed, preferably by changing the
-      # Glimr RequestCaseFees API call back to returning
-      # caseTitle at the top-level of the response data.
-
-      @title ||= fees.any? ? fees.first.case_title : "Missing Title"
+      @title ||= begin
+                   fee = unpaid_fees.any? ? unpaid_fees.first : all_fees.first
+                   fee.nil? ? 'Missing Title' : fee.case_title
+                 end
     end
 
+    # We only care about outstanding fee liabilities, wrt what we are asking the
+    # taxpayer to pay
     def fees
-      @fees ||= response_body.fetch(:feeLiabilities).map do |fee|
+      unpaid_fees
+    end
+
+    private
+
+    def unpaid_fees
+      @unpaid_fees ||= all_fees.find_all {|fee| fee.amount > 0}
+    end
+
+    def all_fees
+      @all_fees ||= response_body.fetch(:feeLiabilities).map do |fee|
         OpenStruct.new(
           glimr_id: Integer(fee.fetch(:feeLiabilityId)),
           description: fee.fetch(:onlineFeeTypeDescription),
@@ -49,8 +56,6 @@ module GlimrApiClient
         )
       end
     end
-
-    private
 
     def endpoint
       '/requestcasefees'
