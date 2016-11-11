@@ -1,4 +1,5 @@
-require 'rails_helper'
+require 'spec_helper'
+require 'support/shared_examples_for_generic_errors'
 
 RSpec.describe GlimrApiClient::RegisterNewCase do
   let(:params) { {} }
@@ -137,18 +138,6 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
       end
     end
 
-    describe 'Unspecified error' do
-      let(:body) {
-        {
-          message: 'Kaboom'
-        }
-      }
-
-      it 'raises an error' do
-        expect {
-          described_class.call(params)
-        }.to raise_error(GlimrApiClient::Unavailable, 'Kaboom')
-      end
-    end
+    include_examples 'generic errors'
   end
 end

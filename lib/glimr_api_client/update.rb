@@ -2,9 +2,9 @@ module GlimrApiClient
   # TODO: rename so it follow api spec
   class Update < Base
     class FeeLiabilityNotFound < StandardError; end
-    class PaymentReferenceFormatInvalid < StandardError; end
-    class GovPayReferenceFormatInvalid < StandardError; end
-    class AmountInvalid < StandardError; end
+    class PaymentReferenceInvalidFormat < StandardError; end
+    class GovPayReferenceInvalidFormat < StandardError; end
+    class InvalidAmount < StandardError; end
     class GovPayReferenceExistsOnSystem < StandardError; end
 
     # TODO: Move this and initialize into Base. It's the same for all but Case.
@@ -40,11 +40,11 @@ module GlimrApiClient
       when 311 # FeeLiability not found
         raise FeeLiabilityNotFound, error
       when 312 # Invalid format for PaymentReference
-        raise PaymentReferenceFormatInvalid, error
+        raise PaymentReferenceInvalidFormat, error
       when 314 # Invalid format for GovPayReference
-        raise GovPayReferenceFormatInvalid, error
+        raise GovPayReferenceInvalidFormat, error
       when 315 # Invalid PaidAmount
-        raise AmountInvalid, error
+        raise InvalidAmount, error
       when 321 # GovPay reference already exists on system
         raise GovPayReferenceExistsOnSystem, error
       end

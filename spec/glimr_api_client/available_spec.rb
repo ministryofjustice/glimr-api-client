@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 require 'support/shared_examples_for_glimr'
 
 RSpec.describe GlimrApiClient::Available do

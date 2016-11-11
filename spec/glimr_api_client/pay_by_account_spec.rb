@@ -1,4 +1,5 @@
-require 'rails_helper'
+require 'spec_helper'
+require 'support/shared_examples_for_generic_errors'
 
 RSpec.describe GlimrApiClient::PayByAccount do
   let(:params) {
@@ -230,18 +231,7 @@ RSpec.describe GlimrApiClient::PayByAccount do
       end
     end
 
-    describe 'Unspecified error' do
-      let(:body) {
-        {
-          message: 'Kaboom'
-        }
-      }
+    include_examples 'generic errors'
 
-      it 'raises an error' do
-        expect {
-          described_class.call(params)
-        }.to raise_error(GlimrApiClient::Unavailable, 'Kaboom')
-      end
-    end
   end
 end

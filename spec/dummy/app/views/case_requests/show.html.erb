@@ -1,5 +1,0 @@
-<% @case_request.fees.each do |fee| %>
-  <%= fee.case_title %>
-  <%= fee.description %>
-  <%= number_to_currency((fee.amount / 100.0), unit: '£') %>
-<% end %>

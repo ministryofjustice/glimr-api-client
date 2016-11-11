@@ -3,7 +3,6 @@ module GlimrApiClient
     class JurisdictionNotFound < StandardError; end
     class OnlineMappingNotFoundOrInvalid < StandardError; end
     class CaseCreationFailed < StandardError; end
-
     attr_reader :request_body
 
     def initialize(params)
@@ -28,7 +27,7 @@ module GlimrApiClient
     end
 
     def re_raise_error(body)
-      error = body.fetch(:message)
+      error = body.fetch(:message, nil)
       case body.fetch(:glimrerrorcode, nil)
       when 411 # Jusidiction not found
         raise JurisdictionNotFound, error

@@ -36,8 +36,9 @@ module GlimrApiClient
       '/pbapaymentrequest'
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def re_raise_error(body)
-      error = body.fetch(:message)
+      error = body.fetch(:message, nil)
       case body.fetch(:glimrerrorcode, nil)
       when 511 # FeeLiability not found for FeeLiabilityID
         raise FeeLiabilityNotFound, error
@@ -54,5 +55,6 @@ module GlimrApiClient
       end
       super(message: error)
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end
