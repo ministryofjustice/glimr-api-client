@@ -1,3 +1,6 @@
+database:
+  override:
+
 test:
   override:
     - bundle exec rake
