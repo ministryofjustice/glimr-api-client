@@ -31,14 +31,14 @@ is received; this includes network errors and timeouts.
 ### Find a case
 
 ```ruby
-  GlimrApiClient::Case.find(<case reference>)
+  GlimrApiClient::Case.find(<case reference>, <confirmation code>)
 ```
 
 Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
-Tribunals, for example). `#title` returns case title from GLiMR, and `#fees`
-returns an array of anonymous objects (OpenStructs) detailing any
-outstanding fees. Each fee object responds to `#glimr_id`,
-`#description`, and `#amount`.
+Tribunals, for example) and confirmation code. `#title` returns case
+title from GLiMR, and `#fees` returns an array of anonymous objects
+(OpenStructs) detailing any outstanding fees. Each fee object responds
+to `#glimr_id`, `#description`, and `#amount`.
 
 Please note that `#amount` returns the amount in pence.
 
