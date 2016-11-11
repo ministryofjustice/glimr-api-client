@@ -199,7 +199,7 @@ end
 RSpec.shared_examples 'glimr times out' do
   let(:glimr_check) {
     class_double(Excon, 'glimr availability')
-  requestpayablecasefees}
+  }
 
   before do
     expect(glimr_check).
