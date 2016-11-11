@@ -36,7 +36,7 @@ RSpec.shared_examples 'generic glimr response' do |case_number, _confirmation_co
       {
         host: 'glimr-api.taxtribunals.dsd.io',
         body: /caseNumber=#{CGI.escape(case_number)}/,
-        path: '/Live_API/api/tdsapi/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestcasefees'
       },
       status: status, body: glimr_response.to_json
     )
@@ -48,7 +48,7 @@ RSpec.shared_examples 'case not found' do
     Excon.stub(
       {
         host: 'glimr-api.taxtribunals.dsd.io',
-        path: '/Live_API/api/tdsapi/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestcasefees'
       },
       status: 404,
       body: {
@@ -75,7 +75,7 @@ RSpec.shared_examples 'no new fees are due' do |case_number, _confirmation_code|
       {
         host: 'glimr-api.taxtribunals.dsd.io',
         body: { caseNumber: case_number }.to_json,
-        path: '/Live_API/api/tdsapi/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestcasefees'
       },
       status: 200, body: response_body.to_json
     )
@@ -102,7 +102,7 @@ RSpec.shared_examples 'a case fee of £20 is due' do |case_number, confirmation_
         host: 'glimr-api.taxtribunals.dsd.io',
         # NOTE: These are order-sensitive.
         body: { jurisdictionId: 8, caseNumber: case_number, confirmationCode: confirmation_code }.to_json,
-        path: '/Live_API/api/tdsapi/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestcasefees'
       },
       status: 200, body: response_body
     )
@@ -132,7 +132,7 @@ RSpec.shared_examples 'two fees' do |case_number, _confirmation_code|
         method: :post,
         host: 'glimr-api.taxtribunals.dsd.io',
         body: "{\"jurisdictionId\":8,\"caseNumber\":\"#{case_number}\",\"confirmationCode\":\"ABC123\"}",
-        path: '/Live_API/api/tdsapi/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestcasefees'
       },
       status: 200, body: no_fees.to_json
     )
@@ -154,7 +154,7 @@ RSpec.shared_examples 'no fees' do |case_number, _confirmation_code|
         method: :post,
         host: 'glimr-api.taxtribunals.dsd.io',
         body: "{\"jurisdictionId\":8,\"caseNumber\":\"#{case_number}\",\"confirmationCode\":\"ABC123\"}",
-        path: '/Live_API/api/tdsapi/requestpayablecasefees'
+        path: '/Live_API/api/tdsapi/requestcasefees'
       },
       status: 200, body: no_fees.to_json
     )

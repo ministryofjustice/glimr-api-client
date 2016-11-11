@@ -46,7 +46,7 @@ RSpec.describe GlimrApiClient::Case do
   describe '#endpoint' do
     specify {
       # Quick-n-dirty mutant kill.
-      expect(described_class.new(case_number, confirmation_code).send(:endpoint)).to eq('/requestpayablecasefees')
+      expect(described_class.new(case_number, confirmation_code).send(:endpoint)).to eq('/requestcasefees')
     }
   end
 

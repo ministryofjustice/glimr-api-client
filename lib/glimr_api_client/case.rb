@@ -33,7 +33,7 @@ module GlimrApiClient
       # for the time being, we will fetch it from there.
       # I'm leaving the "Missing Title" text so that nobody forgets
       # that this needs to be fixed, preferably by changing the
-      # Glimr RequestPayableCaseFees API call back to returning
+      # Glimr RequestCaseFees API call back to returning
       # caseTitle at the top-level of the response data.
 
       @title ||= fees.any? ? fees.first.case_title : "Missing Title"
@@ -53,7 +53,7 @@ module GlimrApiClient
     private
 
     def endpoint
-      '/requestpayablecasefees'
+      '/requestcasefees'
     end
 
     def re_raise_error(body)
