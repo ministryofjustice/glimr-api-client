@@ -15,5 +15,4 @@ module GlimrApiClient
   class Unavailable < StandardError; end
   class CaseNotFound < StandardError; end
   class RequestError < StandardError; end;
-  class FeeLiabilityNotFound < StandardError; end;
 end

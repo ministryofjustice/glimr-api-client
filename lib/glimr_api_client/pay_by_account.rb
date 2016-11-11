@@ -1,5 +1,6 @@
 module GlimrApiClient
   class PayByAccount < Base
+    class FeeLiabilityNotFound < StandardError; end;
     class AccountNotFound < StandardError; end
     class InvalidAccountAndConfirmation < StandardError; end
     class InvalidAmount < StandardError; end
