@@ -6,6 +6,7 @@ require 'glimr_api_client/available'
 require 'glimr_api_client/case'
 require 'glimr_api_client/update'
 require 'glimr_api_client/register_new_case'
+require 'glimr_api_client/pay_by_account'
 
 
 module GlimrApiClient
@@ -14,4 +15,5 @@ module GlimrApiClient
   class Unavailable < StandardError; end
   class CaseNotFound < StandardError; end
   class RequestError < StandardError; end;
+  class FeeLiabilityNotFound < StandardError; end;
 end

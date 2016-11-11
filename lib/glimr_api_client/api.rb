@@ -4,11 +4,11 @@ module GlimrApiClient
   module Api
     def post
       client("#{api_url}#{endpoint}").post(body: request_body.to_json).tap { |resp|
-        handle_response_errors(resp)
+        handle_response_errors(resp) if (400..599).cover?(resp.status)
         @body = resp.body
       }
     rescue Excon::Error => e
-      re_raise_error(endpoint, e)
+      re_raise_error(message: e)
     end
 
     def response_body
@@ -27,22 +27,19 @@ module GlimrApiClient
 
     # Only timeouts and network issues raise errors.
     def handle_response_errors(resp)
-      if resp.status.equal?(404) && endpoint.eql?('/requestpayablecasefees')
-        raise CaseNotFound, resp.status
-      elsif (400..599).cover?(resp.status)
-        re_raise_error(endpoint, resp.status)
-      end
+      # TODO: log error as well.
+      # Deal with cases where we get an otherwise unparseable response body.
+      body = begin
+               JSON.parse(resp.body, symbolize_names: true)
+             rescue JSON::ParserError
+               { message: resp.status }
+             end
+      re_raise_error(body)
     end
 
-    def re_raise_error(docpath, e)
-      case docpath
-      when '/paymenttaken'
-        raise PaymentNotificationFailure, e
-      when '/registernewcase'
-        raise RegisterNewCaseFailure, e
-      else
-        raise Unavailable, e
-      end
+    def re_raise_error(body)
+      error = body.fetch(:message)
+      raise Unavailable, error
     end
 
     def client(uri)
@@ -52,7 +49,8 @@ module GlimrApiClient
           'Content-Type' => 'application/json',
           'Accept' => 'application/json'
         },
-      persistent: true
+        persistent: true,
+        read_timeout: ENV.fetch('GLIMR_API_TIMEOUT_SECONDS', 5)
       )
     end
   end

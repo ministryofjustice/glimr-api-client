@@ -1,9 +1,14 @@
 module GlimrApiClient
+  # TODO: rename so it follow api spec
   class Case
+    class NotFound < StandardError; end
+    class InvalidCaseNumber < StandardError; end
+
     include GlimrApiClient::Api
 
     TRIBUNAL_JURISDICTION_ID = 8
 
+    # TODO: Case should use `#call(params)` directly, like everything else.
     def self.find(case_reference, confirmation_code)
       new(case_reference, confirmation_code).call
     end
@@ -49,6 +54,17 @@ module GlimrApiClient
 
     def endpoint
       '/requestpayablecasefees'
+    end
+
+    def re_raise_error(body)
+      error = body.fetch(:message, nil)
+      case body.fetch(:glimrerrorcode, nil)
+      when 212 # TribunalCase for CaseNumber not found
+        raise NotFound, error
+      when 213 # Invalid CaseNumber/CaseConfirmationCode combination
+        raise InvalidCaseNumber, error
+      end
+      super(message: error)
     end
 
     def request_body

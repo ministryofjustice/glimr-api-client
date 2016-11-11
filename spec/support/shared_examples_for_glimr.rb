@@ -50,7 +50,11 @@ RSpec.shared_examples 'case not found' do
         host: 'glimr-api.taxtribunals.dsd.io',
         path: '/Live_API/api/tdsapi/requestpayablecasefees'
       },
-      status: 404
+      status: 404,
+      body: {
+        glimrerrorcode: 212,
+        message: 'TribunalCase from CaseNumber 12345 not found'
+      }.to_json
     )
   end
 end

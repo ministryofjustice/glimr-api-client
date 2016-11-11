@@ -9,9 +9,14 @@ use in various UK tribunals.
 
 ### Configuration
 
-The gem expects a `GLIMR_API_URL` environment variable, providing the endpoint at which the API can be found. This will be something like; `https://glimr-api.taxtribunals.dsd.io`
+The gem expects a `GLIMR_API_URL` environment variable, providing the
+endpoint at which the API can be found. This will be something like;
+`https://glimr-api.taxtribunals.dsd.io`
 
 This URL must be accessible from wherever your code is running.
+
+If you need to set the api time, use the `GLIMR_API_TIMEOUT_SECONDS`
+environment variable.  This defaults to 5 seconds.
 
 ### Check Availablity
 
@@ -26,23 +31,81 @@ is received; this includes network errors and timeouts.
 ### Find a case
 
 ```ruby
-GlimrApiClient::Case.find(<case reference>)
+  GlimrApiClient::Case.find(<case reference>, <confirmation code>)
 ```
 
 Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
-Tribunals, for example). `#title` returns case title from GLiMR, and `#fees`
-returns an array of anonymous objects (OpenStructs) detailing any
-outstanding fees. Each fee object responds to `#glimr_id`,
-`#description`, and `#amount`.
+Tribunals, for example) and confirmation code. `#title` returns case
+title from GLiMR, and `#fees` returns an array of anonymous objects
+(OpenStructs) detailing any outstanding fees. Each fee object responds
+to `#glimr_id`, `#description`, and `#amount`.
 
 Please note that `#amount` returns the amount in pence.
 
 If a case is not found, the client will raise `GlimrApiClient::CaseNotFound`.
 
+### Pay by Account
+
+```ruby
+  GlimrApiClient::PayByAccount.call(<params>)
+```
+
+Pay tribunal fees with a Pay By Account reference.
+
+Params are as follows:
+
+```ruby
+  feeLiabilityId: 123456789
+  pbaAccountNumber: "PBA1234567"
+  pbaConfirmationCode: "AC-D3-46" or "ACD346" - Glimr accepts hyphens
+  pbaTransactionReference: User's own reference. Max of 240 characters
+  amountToPayInPence: 9999f
+```
+
+### Register a New Case
+
+```ruby
+GlimrApiClient::RegisterNewCase.call(<case parameters>)
+```
+
+Accepts the following parameters:
+
+```ruby
+  jurisdictionId: 8,
+  onlineMappingCode: 'something',
+  contactPhone: '1234',
+  contactFax: '5678',
+  contactEmail: 'foo_at_bar.com',
+  contactPreference: 'Email',
+  contactFirstName: 'Alice',
+  contactLastName: 'Caroll',
+  contactStreet1: '5_Wonderstreet',
+  contactStreet2: 'contact_street_2',
+  contactStreet3: 'contact_street_3',
+  contactStreet4: 'contact_street_4',
+  contactCity: 'London',
+  documentsURL: 'http...google.com',
+  repPhone: '7890',
+  repFax: '6789',
+  repEmail: 'bar_at_baz.com',
+  repPreference: 'Fax',
+  repReference: 'MYREF',
+  repIsAuthorised: 'Yes',
+  repOrganisationName: 'Acme._Ltd.',
+  repFAO: 'Bob_Hope',
+  repStreet1: '5_Repstreet',
+  repStreet2: 'Repton',
+  repStreet3: 'Repshire',
+  repStreet4: 'Rep_st._4',
+  repCity: 'City_of_reps'
+```
+
+Currently only `jurisdictionId` and `onlineMappingCode` are mandatory.
+
 ### Update a case, mark as paid
 
 ```ruby
-GlimrApiClient::Update.call(<Fee object>)
+  GlimrApiClient::Update.call(<Fee object>)
 ```
 
 Update a GLiMR case to indicate that payment has been received for a

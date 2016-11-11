@@ -1,7 +1,12 @@
 module GlimrApiClient
   class RegisterNewCase < Base
+    class JurisdictionNotFound < StandardError; end
+    class OnlineMappingNotFoundOrInvalid < StandardError; end
+    class CaseCreationFailed < StandardError; end
+    attr_reader :request_body
+
     def initialize(params)
-      @params = params
+      @request_body = params
     end
 
     private
@@ -21,8 +26,17 @@ module GlimrApiClient
       '/registernewcase'
     end
 
-    def request_body
-      @params
+    def re_raise_error(body)
+      error = body.fetch(:message, nil)
+      case body.fetch(:glimrerrorcode, nil)
+      when 411 # Jusidiction not found
+        raise JurisdictionNotFound, error
+      when 412 # Online Mapping not found or invalid
+        raise OnlineMappingNotFoundOrInvalid, error
+      when 421 # Creation failed (due to a database problem)
+        raise CaseCreationFailed, error
+      end
+      super(message: error)
     end
   end
 end

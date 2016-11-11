@@ -1,15 +1,21 @@
-require 'rails_helper'
-require 'support/shared_examples_for_glimr'
+require 'spec_helper'
+require 'support/shared_examples_for_generic_errors'
 
 RSpec.describe GlimrApiClient::RegisterNewCase do
-  include_examples 'register new case with glimr'
-
   let(:params) { {} }
-  let(:excon) { class_double(Excon, post: double(status: 200, body: '')) }
+  let(:post_response) { double(status: 200, body: {}) }
+  let(:excon) { class_double(Excon, post: post_response) }
   let(:api) { described_class.new(params) }
 
   before do
-    allow(api).to receive(:client).and_return(excon)
+    allow_any_instance_of(described_class).to receive(:client).and_return(excon)
+  end
+
+  describe '#endpoint' do
+    specify {
+      # Quick-n-dirty mutant kill.
+      expect(described_class.new(params).send(:endpoint)).to eq('/registernewcase')
+    }
   end
 
   context 'validating parameters' do
@@ -35,7 +41,7 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
       end
     end
 
-    it 'does not barf when required parameters are provided' do
+    it 'does not raise an error when required parameters are provided' do
       expect { described_class.call(valid_params) }.not_to raise_error
     end
   end
@@ -78,15 +84,60 @@ RSpec.describe GlimrApiClient::RegisterNewCase do
     end
   end
 
-  context 'when excon post fails' do
+  context 'errors' do
     let(:params) { { jurisdictionId: 8, onlineMappingCode: 'something' } }
+    let(:body) { { message: '' } }
+    let(:post_response) { double(status: 404, body: body.to_json) }
 
-    before do
-      allow(excon).to receive(:post).and_raise(Excon::Error, 'kaboom')
+    # are not processed here.
+    describe 'error 411 - Jurisdiction not found' do
+      let(:body) {
+        {
+          glimrerrorcode: 411,
+          # Truncated for brevity
+          message: 'Not found'
+        }
+      }
+
+      it 'raises an error' do
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::RegisterNewCase::JurisdictionNotFound, 'Not found')
+      end
     end
 
-    it 're-raises the error' do
-      expect { api.call }.to raise_error(GlimrApiClient::RegisterNewCaseFailure, 'kaboom')
+    describe 'error 412 - Online Mapping not found' do
+      let(:body) {
+        {
+          glimrerrorcode: 412,
+          # Truncated for brevity
+          message: 'Not found'
+        }
+      }
+
+      it 'raises an error' do
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::RegisterNewCase::OnlineMappingNotFoundOrInvalid, 'Not found')
+      end
     end
+
+    describe 'error 421 - CaseCreationFailed' do
+      let(:body) {
+        {
+          glimrerrorcode: 421,
+          # Truncated for brevity
+          message: 'Failed'
+        }
+      }
+
+      it 'raises an error' do
+        expect {
+          described_class.call(params)
+        }.to raise_error(GlimrApiClient::RegisterNewCase::CaseCreationFailed, 'Failed')
+      end
+    end
+
+    include_examples 'generic errors'
   end
 end
