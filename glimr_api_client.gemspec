@@ -20,11 +20,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'fuubar', '~> 2.0'
   spec.add_development_dependency 'mutant-rspec', '~> 0.8'
   spec.add_development_dependency 'pry-byebug', '~> 3.4'
-  spec.add_development_dependency 'rails', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rspec-rails', '~> 3.5'
+  spec.add_development_dependency 'rspec', '~> 3.5'
   spec.add_development_dependency 'rubocop', '~> 0.41'
-  spec.add_development_dependency 'sqlite3', '~> 1.3'
 
   spec.add_dependency 'excon', '~> 0.51'
 end
