@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe GlimrApiClient::Available do
 
-  it 'posts and empty hash as its payload' do
+  it 'posts an empty hash as its payload' do
     req = double(:request, body: {})
     resp = double(:response).as_null_object
     expect(req).to receive(:post).with(body: '{}').and_return(resp)
