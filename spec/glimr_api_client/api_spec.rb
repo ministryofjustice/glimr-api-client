@@ -32,24 +32,29 @@ RSpec.describe GlimrApiClient::Api, '#post' do
     end
   end
 
-  it 'exposes an excon client' do
-    Excon.stub(
-      {
-        method: :post,
-        body: { parameter: "parameter" }.to_json,
-        headers: {
+  describe 'excon client' do
+    before do
+      Excon.stub(
+        {
+          method: :post,
+          body: { parameter: "parameter" }.to_json,
+          headers: {
           "Content-Type" => "application/json",
           "Accept" => "application/json"
         },
         path: path,
         persistent: true,
         read_timeout: 5
-      },
-      status: 200, body: { response: 'response' }.to_json
-    )
-    glimr_method_class.tap do |o|
-      expect { o.post }.not_to raise_error
-      expect(o.response_body).to eq({ response: 'response' })
+        },
+        status: 200, body: { response: 'response' }.to_json
+      )
+    end
+
+    it 'returns expected response' do
+      glimr_method_class.tap do |o|
+        expect { o.post }.not_to raise_error
+        expect(o.response_body).to eq({ response: 'response' })
+      end
     end
   end
 
