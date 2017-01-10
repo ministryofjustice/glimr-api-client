@@ -15,6 +15,10 @@ module GlimrApiClient
       @response_body ||= JSON.parse(@body, symbolize_names: true)
     end
 
+    def timeout 
+      Integer(ENV.fetch('GLIMR_API_TIMEOUT_SECONDS', 5))
+    end
+
     private
 
     # If this is set using a constant, and the gem is included in a project
@@ -50,7 +54,7 @@ module GlimrApiClient
           'Accept' => 'application/json'
         },
         persistent: true,
-        read_timeout: ENV.fetch('GLIMR_API_TIMEOUT_SECONDS', 5)
+        read_timeout: timeout 
       )
     end
   end
