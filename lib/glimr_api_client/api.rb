@@ -8,11 +8,11 @@ module GlimrApiClient
     # we have very limited access.
     # DO NOT SET THIS ENV VAR IN PRODUCTION - we should not be logging
     # this sensitive user data from the live service.
-    puts "GLIMR POST: #{request_body.to_json}" if ENV['GLIMR_API_DEBUG']
     def post
+      puts "GLIMR POST: #{request_body.to_json}" if ENV.key?('GLIMR_API_DEBUG')
       client("#{api_url}#{endpoint}").post(body: request_body.to_json).tap { |resp|
         handle_response_errors(resp) if (400..599).cover?(resp.status)
-        puts "GLIMR REPONSE: #{resp.body}" if ENV['GLIMR_API_DEBUG']
+        puts "GLIMR RESPONSE: #{resp.body}" if ENV.key?('GLIMR_API_DEBUG')
         @body = resp.body
       }
     rescue Excon::Error => e

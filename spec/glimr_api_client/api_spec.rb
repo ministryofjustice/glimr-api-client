@@ -56,6 +56,36 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         expect(o.response_body).to eq({ response: 'response' })
       end
     end
+
+    context "without GLIMR_API_DEBUG" do
+      before do
+        allow($stdout).to receive(:write)
+      end
+
+      it "does not log the request" do
+        glimr_method_class.tap do |o|
+          expect($stdout).to_not receive(:write).with(%[GLIMR POST: {"parameter":"parameter"}])
+          expect($stdout).to_not receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
+          o.post
+        end
+      end
+    end
+
+    context "with GLIMR_API_DEBUG = true" do
+      before do
+        stub_const('ENV', ENV.to_h.merge('GLIMR_API_DEBUG' => true))
+        allow($stdout).to receive(:write)
+      end
+
+      it "logs the request" do
+        glimr_method_class.tap do |o|
+          expect($stdout).to receive(:write).with(%[GLIMR POST: {"parameter":"parameter"}])
+          expect($stdout).to receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
+          o.post
+        end
+      end
+    end
+
   end
 
   context 'common errors' do
