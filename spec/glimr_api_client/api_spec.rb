@@ -64,7 +64,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
 
       it "does not log the request" do
         glimr_method_class.tap do |o|
-          expect($stdout).to_not receive(:write).with(%[GLIMR POST: {"parameter":"parameter"}])
+          expect($stdout).to_not receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
           expect($stdout).to_not receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
           o.post
         end
@@ -79,7 +79,7 @@ RSpec.describe GlimrApiClient::Api, '#post' do
 
       it "logs the request" do
         glimr_method_class.tap do |o|
-          expect($stdout).to receive(:write).with(%[GLIMR POST: {"parameter":"parameter"}])
+          expect($stdout).to receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
           expect($stdout).to receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
           o.post
         end
