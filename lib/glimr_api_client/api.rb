@@ -2,9 +2,17 @@ require 'excon'
 
 module GlimrApiClient
   module Api
+    # Showing the GLiMR post & response in the container logs is helpful
+    # for troubleshooting in the staging environment (when we are using
+    # the websocket link to communicate with a GLiMR instance to which
+    # we have very limited access.
+    # DO NOT SET THIS ENV VAR IN PRODUCTION - we should not be logging
+    # this sensitive user data from the live service.
     def post
+      puts "GLIMR POST: #{request_body.to_json}" if ENV.key?('GLIMR_API_DEBUG')
       client("#{api_url}#{endpoint}").post(body: request_body.to_json).tap { |resp|
         handle_response_errors(resp) if (400..599).cover?(resp.status)
+        puts "GLIMR RESPONSE: #{resp.body}" if ENV.key?('GLIMR_API_DEBUG')
         @body = resp.body
       }
     rescue Excon::Error => e
@@ -15,7 +23,7 @@ module GlimrApiClient
       @response_body ||= JSON.parse(@body, symbolize_names: true)
     end
 
-    def timeout 
+    def timeout
       Integer(ENV.fetch('GLIMR_API_TIMEOUT_SECONDS', 5))
     end
 
@@ -54,7 +62,7 @@ module GlimrApiClient
           'Accept' => 'application/json'
         },
         persistent: true,
-        read_timeout: timeout 
+        read_timeout: timeout
       )
     end
   end
