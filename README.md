@@ -33,56 +33,6 @@ Check if the GLiMR API is available.  Raises
 `GlimrApiClient::Unavailable` if anything other than a positive response
 is received; this includes network errors and timeouts.
 
-### Find a case
-
-```ruby
-  GlimrApiClient::Case.find(<case reference>, <confirmation code>)
-```
-
-Find a case on GLiMR using the case reference (‘TT/2012/00001’ in Tax
-Tribunals, for example) and confirmation code. `#title` returns case
-title from GLiMR, and `#fees` returns an array of anonymous objects
-(OpenStructs) detailing any outstanding fees. Each fee object responds
-to `#glimr_id`, `#description`, and `#amount`.
-
-Please note that `#amount` returns the amount in pence.
-
-If a case is not found, the client will raise `GlimrApiClient::CaseNotFound`.
-
-### Pay by Account
-
-```ruby
-  GlimrApiClient::PayByAccount.call(<params>)
-```
-
-Pay tribunal fees with a Pay By Account reference.
-
-Params are as follows:
-
-```ruby
-  feeLiabilityId: 123456789
-  pbaAccountNumber: "PBA1234567"
-  pbaConfirmationCode: "AC-D3-46" or "ACD346" - Glimr accepts hyphens
-  pbaTransactionReference: User's own reference. Max of 240 characters
-  amountToPayInPence: 9999
-```
-
-### Help With Fees Request
-
-```ruby
-  GlimrApiClient::HwfRequested.call(<params>)
-```
-
-Pay tribunal fees with a Help With Fees reference.
-
-Params are as follows:
-
-```ruby
-  feeLiabilityId: 123456789
-  hwfRequestReference: ABCD12345
-  amountToPayInPence: 9999
-```
-
 ### Register a New Case
 
 ```ruby
@@ -123,20 +73,18 @@ Accepts the following parameters:
 
 Currently only `jurisdictionId` and `onlineMappingCode` are mandatory.
 
-### Update a case, mark as paid
+## Deprecated Calls
 
-```ruby
-  GlimrApiClient::Update.call(<Fee object>)
-```
+Pending a Ministerial review of fees in tribunals, the four method
+related to managing payment were deprecated in late April, 2017.
 
-Update a GLiMR case to indicate that payment has been received for a
-fee. The fee object passed must respond to `#glimr_id`,
-`#govpay_reference`, `#govpay_payment_id`, and `#amount`.  `#amount`
-must be the amount in pence. The client will validate the request and raise
-`GlimrApiClient::RequestError` if any of these methods are missing.
+In the event that these methods are required at a later date, the code
+can be re-vivfied in the repo. See the following commit for details of
+files removed:
 
-Network errors or API failures will raise
-`GlimrApiClient::PaymentNotificationFailure`.
+02fe1117956089a4b2e62f2e93540165443de06e
+
+The specs may require some adaption.
 
 ### Examples
 
