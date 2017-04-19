@@ -20,7 +20,7 @@ RSpec.describe GlimrApiClient::Api do
 
     it 'does not error if override is a string' do
       allow(ENV).to receive(:fetch).with('GLIMR_API_TIMEOUT_SECONDS', 5).and_return('7')
-      expect(subject.timeout).to eq(7)
+      expect(subject.timeout).to be_kind_of(Integer)
     end
   end
 end

@@ -62,7 +62,8 @@ module GlimrApiClient
           'Accept' => 'application/json'
         },
         persistent: true,
-        read_timeout: timeout
+        write_timeout: timeout,
+        connection_timeout: timeout,
       )
     end
   end

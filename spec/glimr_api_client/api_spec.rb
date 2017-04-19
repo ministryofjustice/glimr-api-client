@@ -44,7 +44,8 @@ RSpec.describe GlimrApiClient::Api, '#post' do
         },
         path: path,
         persistent: true,
-        read_timeout: 5
+        write_timeout: 5,
+        connection_timeout: 5
         },
         status: 200, body: { response: 'response' }.to_json
       )

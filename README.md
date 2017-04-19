@@ -15,8 +15,13 @@ endpoint at which the API can be found. This will be something like;
 
 This URL must be accessible from wherever your code is running.
 
-If you need to set the api time, use the `GLIMR_API_TIMEOUT_SECONDS`
+If you need to set the api timeout, use the `GLIMR_API_TIMEOUT_SECONDS`
 environment variable.  This defaults to 5 seconds.
+
+The call to register new cases can take a long time.  It has its own
+timeout as a result: 32 seconds. Use the
+`GLIMR_REGISTER_NEW_CASE_TIMEOUT_SECONDS` environment variable to
+override this.
 
 ### Check Availablity
 

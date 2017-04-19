@@ -9,6 +9,14 @@ module GlimrApiClient
       @request_body = params
     end
 
+    # This addresses the problem that RegisterNewCase calls can take a much
+    # longer time to respond than availability calls. At the time this was
+    # written, the connection was periodically timing out at just over 30
+    # seconds.
+    def timeout
+      Integer(ENV.fetch('GLIMR_REGISTER_NEW_CASE_TIMEOUT_SECONDS', 32))
+    end
+
     private
 
     def check_request!
