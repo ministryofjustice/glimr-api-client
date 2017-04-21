@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-RSpec.describe GlimrApiClient::Api, '#post' do
+RSpec.describe GlimrApiClient::Api do
   let(:docpath) { '/Live_API/api/tdsapi' }
   let(:api_endpoint) { 'endpoint' }
   let(:path) { [docpath, api_endpoint].join('/') }
 
   # Required for run/build ordering in mutation tests.
-  let(:glimr_method_class) do
+  subject do
     Class.new do
       include GlimrApiClient::Api
 
@@ -25,35 +25,56 @@ RSpec.describe GlimrApiClient::Api, '#post' do
   end
 
   before do
-    glimr_method_class.instance_eval do
+    subject.instance_eval do
       def endpoint
         '/endpoint'
       end
     end
   end
 
-  describe 'excon client' do
+  describe '#post' do
+    let(:body) { { response: 'response' } }
+
     before do
-      Excon.stub(
-        {
-          method: :post,
-          body: { parameter: "parameter" }.to_json,
-          headers: {
-          "Content-Type" => "application/json",
-          "Accept" => "application/json"
-        },
-        path: path,
-        persistent: true,
-        read_timeout: 5
-        },
-        status: 200, body: { response: 'response' }.to_json
-      )
+      stub_request(:post, /endpoint$/).
+        to_return(status: 200, body: body.to_json)
     end
 
-    it 'returns expected response' do
-      glimr_method_class.tap do |o|
-        expect { o.post }.not_to raise_error
-        expect(o.response_body).to eq({ response: 'response' })
+    context '#response_body' do
+      it 'gets set from the #post call' do
+        subject.tap do |o|
+          o.post
+          expect(o.response_body).to eq({ response: 'response' })
+        end
+      end
+    end
+
+    context '#make_request' do
+      # Other tests fail if this call is wrong. Mutant does not target them,
+      # though, as they are outside its understood hierarchy.
+      it 'calls the correct endpoint' do
+        allow(subject).to receive(:api_url).and_return('https://api')
+        expect(subject).to receive(:make_request).with('https://api/endpoint', anything)
+        subject.post
+      end
+
+      it 'send the #request_body from the including class' do
+        expect(subject).to receive(:make_request).with(anything, { parameter: 'parameter' })
+        subject.post
+      end
+    end
+
+    context "with GLIMR_API_DEBUG = true" do
+      before do
+        stub_const('ENV', ENV.to_h.merge('GLIMR_API_DEBUG' => true))
+        allow($stdout).to receive(:write)
+      end
+
+      it "logs the request" do
+        subject.tap do |o|
+          expect($stdout).to receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
+          o.post
+        end
       end
     end
 
@@ -63,7 +84,138 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       end
 
       it "does not log the request" do
-        glimr_method_class.tap do |o|
+        subject.tap do |o|
+          expect($stdout).to_not receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
+          o.post
+        end
+      end
+    end
+
+    context 'timeout' do
+      before do
+        stub_request(:post, /endpoint$/).to_timeout
+      end
+
+      it 'raises Unavailable "timed out"' do
+        expect{ subject.post }.to raise_error(GlimrApiClient::Unavailable, 'timed out')
+      end
+    end
+
+    context 'glimr errors' do
+      context 'with :glimererrorcode' do
+        let(:body) { { glimrerrorcode: 123, message: 'Some Glimr Error' } }
+
+        it 'raises Unavailable with the glimr error message' do
+          expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, 'Some Glimr Error')
+        end
+      end
+
+      context 'without :glimrerrorcode' do
+        let(:body) { { message: 'Error without code' } }
+
+        it 'raises Unavailable with the glimr error message' do
+          expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, 'Error without code')
+        end
+      end
+
+      context 'wihthout :glimrerrorcode and :message' do
+        let(:body) { { } }
+
+        it 'raises Unavailable' do
+          expect { subject.post }.to raise_error(GlimrApiClient::Unavailable)
+        end
+      end
+    end
+
+    context 'network errors' do
+      it 'raises Unavailable on 404' do
+        stub_request(:post, /endpoint$/).to_return(status: 404)
+        expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, '404')
+      end
+
+      it 'raises Unavailable when it receives a 400' do
+        stub_request(:post, /endpoint$/).to_return(status: 400)
+        expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, '400')
+      end
+
+      it 'raises Unavailable when it receives a 500' do
+        stub_request(:post, /endpoint$/).to_return(status: 500)
+        expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, '500')
+      end
+
+      it 'raises Unavailable when it receives a 599' do
+        stub_request(:post, /endpoint$/).to_return(status: 599)
+        expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, '599')
+      end
+
+      it 'does not raise exceptions for 3xx range codes' do
+        stub_request(:post, /endpoint$/).to_return(status: 399)
+        expect { subject.post }.not_to raise_error
+      end
+
+      it 'does not raise exceptions for out-of-range codes' do
+        stub_request(:post, /endpoint$/).to_return(status: 600)
+        expect { subject.post }.not_to raise_error
+      end
+    end
+  end
+
+  it 'passes an api endpoint and the request body to the REST client' do
+    allow(subject).to receive(:api_url).and_return('some_url')
+    expect(subject).to receive(:client).
+      with('some_url/endpoint', { parameter: 'parameter' }).
+      and_return(double.as_null_object)
+    subject.post
+  end
+
+  describe 'configuration' do
+    it 'fetches the glimr api endpoint from ENV, sets default if not available' do
+      expect(ENV).to receive(:fetch).
+        with('GLIMR_API_URL', 'https://glimr-api.taxtribunals.dsd.io/Live_API/api/tdsapi')
+
+      # This is a mutant kill. If I call `.post`, then I have to stub most of
+      # the ENV variables (several fail with dummy objects) and webmock
+      # the response. Calling the private method seems like a good tradeoff for
+      # reducing the spec complexity.
+      subject.send(:api_url)
+    end
+  end
+
+  describe 'REST client' do
+    before do
+      stub_request(:post, /endpoint$/).
+        to_return(status: 200, body: {response: 'response'}.to_json)
+    end
+
+    # Begin Typhoeus-specific mutant kills.
+    it 'sets the :body attribute of the client' do
+      expect(Typhoeus::Request).to receive(:new).with(anything, hash_including(body: { parameter: 'parameter' })).and_return(double.as_null_object)
+      subject.post
+    end
+
+    it 'sets JSON request headers' do
+      expect(Typhoeus::Request).to receive(:new).
+        with(anything, hash_including(headers: { "Content-Type" => "application/json", "Accept" => "application/json" })).
+        and_return(double.as_null_object)
+      subject.post
+    end
+
+    # Typhoeus can set :connect_timeout and :read_timeout if more granularity is required.
+    it 'sets the client timeout' do
+      expect(Typhoeus::Request).to receive(:new).
+        with(anything, hash_including(timeout: kind_of(Numeric))).
+        and_return(double.as_null_object)
+      subject.post
+    end
+    # End Typhoeus-specific mutant kills.
+
+    context "without GLIMR_API_DEBUG" do
+      before do
+        allow($stdout).to receive(:write)
+      end
+
+      it "does not log the request" do
+        subject.tap do |o|
           expect($stdout).to_not receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
           expect($stdout).to_not receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
           o.post
@@ -78,129 +230,59 @@ RSpec.describe GlimrApiClient::Api, '#post' do
       end
 
       it "logs the request" do
-        glimr_method_class.tap do |o|
-          expect($stdout).to receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
+        subject.tap do |o|
           expect($stdout).to receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
           o.post
         end
       end
     end
-
   end
 
-  context 'common errors' do
-    it 'raises unavailable on 404' do
-      Excon.stub(
-        {
-          method: :post,
-          path: path
-        },
-        status: 404
-      )
-      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '404')
-    end
-
-    it 'raises an exception when it receives a 500' do
-      Excon.stub(
-        {
-          method: :post,
-          path: path
-        },
-        status: 500
-      )
-      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '500')
-    end
-
-    it 'raises an exception when it receives a 400' do
-      Excon.stub(
-        {
-          method: :post,
-          path: path
-        },
-        status: 400
-      )
-      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '400')
-    end
-
-    it 'does not raise exceptions for 3xx range codes' do
-      Excon.stub(
-        {
-          method: :post,
-          path: path
-        },
-        status: 399
-      )
-      expect { glimr_method_class.post }.not_to raise_error
-    end
-
-    it 'does not raise exceptions for out-of-range codes' do
-      Excon.stub(
-        {
-          method: :post,
-          path: path
-        },
-        status: 600
-      )
-      expect { glimr_method_class.post }.not_to raise_error
-    end
-
-    it 'raises an exception when it receives a 599' do
-      Excon.stub(
-        {
-          method: :post,
-          path: path
-        },
-        status: 599
-      )
-      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, '599')
-    end
-  end
-
-  context 'the client dies without returning' do
-    let(:excon) {
-      class_double(Excon)
-    }
+  describe 'parsing the JSON response' do
+    let(:parsed_response) { instance_double(Hash, key?: false, empty?: false) }
 
     before do
-      expect(excon).to receive(:post).and_raise(Excon::Error, 'it died')
+      stub_request(:post, /endpoint$/).
+        to_return(status: 200, body: {response: 'response'}.to_json)
+      allow(JSON).to receive(:parse).and_return(parsed_response)
     end
 
-    it 'raises an exception if the client dies' do
-      expect(glimr_method_class).to receive(:client).and_return(excon)
-      expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, 'it died')
-    end
-  end
-
-  context 'errors' do
-    let(:excon) { class_double(Excon, post: post_response) }
-
-    context 'from glimr'
-    let(:body) {
-      {
-        glimrerrorcode: 123,
-        message: 'Some Glimr Error'
-      }
-    }
-    let(:post_response) { double(status: 404, body: body.to_json) }
-
-    before do
-      allow(glimr_method_class).to receive(:client).and_return(excon)
+    it 'symbolizes the keys' do
+      expect(JSON).to receive(:parse).with(anything, symbolize_names: true)
+      subject.post
     end
 
-    describe 'Unspecified error' do
-      it 'raises an error' do
-        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, 'Some Glimr Error')
-      end
+    it 'checks the response for a :glimrerrorcode key' do
+      expect(parsed_response).to receive(:key?).with(:glimrerrorcode)
+      subject.post
     end
 
-    context 'network errrors' do
-      before do
-        allow(excon).to receive(:post).and_raise(Excon::Error, 'kaboom')
-      end
+    it 'raises an error if there is a :glimrerrorcode key' do
+      allow(parsed_response).to receive(:key?).with(:glimrerrorcode).and_return(true)
+      expect(subject).to receive(:re_raise_error)
+      subject.post
+    end
 
-      it 're-raises the error' do
-        expect { glimr_method_class.post }.to raise_error(GlimrApiClient::Unavailable, 'kaboom')
-      end
+    it 'checks the response for an error :message key' do
+      expect(parsed_response).to receive(:key?).with(:message)
+      subject.post
+    end
+
+    it 'raises an error if there is an error :message key' do
+      allow(parsed_response).to receive(:key?).with(:message).and_return(true)
+      expect(subject).to receive(:re_raise_error)
+      subject.post
+    end
+
+    it 'checks if the response is empty' do
+      expect(parsed_response).to receive(:empty?)
+      subject.post
+    end
+
+    it 'raises an error if the response is empty' do
+      allow(parsed_response).to receive(:empty?).and_return(true)
+      expect(subject).to receive(:re_raise_error)
+      subject.post
     end
   end
 end

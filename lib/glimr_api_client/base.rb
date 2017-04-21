@@ -1,9 +1,14 @@
 module GlimrApiClient
   class Base
     include GlimrApiClient::Api
+    attr_reader :args
 
     def self.call(*args)
       new(*args).call
+    end
+
+    def initialize(*args)
+      @args = args
     end
 
     def call
@@ -12,6 +17,8 @@ module GlimrApiClient
       self
     end
 
+    def check_request!
+    end
   end
 end
 
