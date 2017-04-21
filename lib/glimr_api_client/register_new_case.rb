@@ -3,6 +3,9 @@ module GlimrApiClient
     class JurisdictionNotFound < StandardError; end
     class OnlineMappingNotFoundOrInvalid < StandardError; end
     class CaseCreationFailed < StandardError; end
+
+    TRIBUNAL_JURISDICTION_ID = 8
+
     attr_reader :request_body
 
     def initialize(params)

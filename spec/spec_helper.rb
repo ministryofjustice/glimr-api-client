@@ -1,4 +1,4 @@
-require 'excon'
+require 'webmock/rspec'
 require 'pry'
 require 'glimr_api_client'
 
@@ -11,12 +11,4 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
   config.shared_context_metadata_behavior = :apply_to_host_groups
-
-  config.before(:all) do
-    Excon.defaults[:mock] = true
-  end
-
-  config.after(:each) do
-    Excon.stubs.clear
-  end
 end

@@ -5,7 +5,6 @@ require 'glimr_api_client/base'
 require 'glimr_api_client/available'
 require 'glimr_api_client/register_new_case'
 
-
 module GlimrApiClient
   class RegisterNewCaseFailure < StandardError; end
   class Unavailable < StandardError; end
