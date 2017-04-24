@@ -26,7 +26,7 @@ module GlimrApiClient
     # are indicated by a successful response that has the `:glimrerrorcode` key
     # set. See `::RegisterNewCase` for an example.
     def re_raise_error(body)
-      raise Unavailable, body.fetch(:message, nil)
+      raise Unavailable, body.fetch(:message)
     end
 
     def parse_response(response_body)
@@ -38,7 +38,6 @@ module GlimrApiClient
         # happen as all errors should have both `:glimrerrorcode` and
         # `:message`...
         re_raise_error(body) if body.key?(:message)
-        re_raise_error({}) if body.empty?
       }
     end
 

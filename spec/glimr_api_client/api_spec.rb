@@ -117,14 +117,6 @@ RSpec.describe GlimrApiClient::Api do
           expect { subject.post }.to raise_error(GlimrApiClient::Unavailable, 'Error without code')
         end
       end
-
-      context 'wihthout :glimrerrorcode and :message' do
-        let(:body) { { } }
-
-        it 'raises Unavailable' do
-          expect { subject.post }.to raise_error(GlimrApiClient::Unavailable)
-        end
-      end
     end
 
     context 'network errors' do
@@ -270,17 +262,6 @@ RSpec.describe GlimrApiClient::Api do
 
     it 'raises an error if there is an error :message key' do
       allow(parsed_response).to receive(:key?).with(:message).and_return(true)
-      expect(subject).to receive(:re_raise_error)
-      subject.post
-    end
-
-    it 'checks if the response is empty' do
-      expect(parsed_response).to receive(:empty?)
-      subject.post
-    end
-
-    it 'raises an error if the response is empty' do
-      allow(parsed_response).to receive(:empty?).and_return(true)
       expect(subject).to receive(:re_raise_error)
       subject.post
     end
