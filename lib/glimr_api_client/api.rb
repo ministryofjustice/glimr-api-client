@@ -11,7 +11,7 @@ module GlimrApiClient
     # DO NOT SET THIS ENV VAR IN PRODUCTION - we should not be logging
     # this sensitive user data from the live service.
     def post
-      @response_body = make_request("#{api_url}#{endpoint}", request_body)
+      @response_body = make_request("#{api_url}#{endpoint}", request_body.to_json)
       puts "GLIMR POST: #{endpoint} - #{request_body.to_json}" if ENV.key?('GLIMR_API_DEBUG')
     end
 
