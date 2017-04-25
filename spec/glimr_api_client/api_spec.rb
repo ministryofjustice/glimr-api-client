@@ -40,6 +40,13 @@ RSpec.describe GlimrApiClient::Api do
         to_return(status: 200, body: body.to_json)
     end
 
+    context '#request_body' do
+      it 'is always sent as JSON' do
+        expect(subject).to receive(:make_request).with(anything, { parameter: 'parameter' }.to_json)
+        subject.post
+      end
+    end
+
     context '#response_body' do
       it 'gets set from the #post call' do
         subject.tap do |o|
@@ -59,7 +66,7 @@ RSpec.describe GlimrApiClient::Api do
       end
 
       it 'send the #request_body from the including class' do
-        expect(subject).to receive(:make_request).with(anything, { parameter: 'parameter' })
+        expect(subject).to receive(:make_request).with(anything, { parameter: 'parameter' }.to_json)
         subject.post
       end
     end
@@ -155,7 +162,7 @@ RSpec.describe GlimrApiClient::Api do
   it 'passes an api endpoint and the request body to the REST client' do
     allow(subject).to receive(:api_url).and_return('some_url')
     expect(subject).to receive(:client).
-      with('some_url/endpoint', { parameter: 'parameter' }).
+      with('some_url/endpoint', { parameter: 'parameter' }.to_json).
       and_return(double.as_null_object)
     subject.post
   end
@@ -181,7 +188,9 @@ RSpec.describe GlimrApiClient::Api do
 
     # Begin Typhoeus-specific mutant kills.
     it 'sets the :body attribute of the client' do
-      expect(Typhoeus::Request).to receive(:new).with(anything, hash_including(body: { parameter: 'parameter' })).and_return(double.as_null_object)
+      expect(Typhoeus::Request).to receive(:new).
+        with(anything, hash_including(body: { parameter: 'parameter' }.to_json)).
+        and_return(double.as_null_object)
       subject.post
     end
 
