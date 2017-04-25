@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    glimr-api-client (0.3.1)
+    glimr-api-client (0.3.2)
       typhoeus (~> 1.1.2)
 
 GEM
