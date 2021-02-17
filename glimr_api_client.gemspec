@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
 
-  spec.add_development_dependency 'bundler', '~> 1.10'
+  spec.add_development_dependency 'bundler', '~> 2.2.0'
   spec.add_development_dependency 'capybara', '~> 2.7'
   spec.add_development_dependency 'codeclimate-test-reporter', '~> 0.2'
   spec.add_development_dependency 'fuubar', '~> 2.0'
