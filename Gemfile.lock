@@ -154,7 +154,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.10)
+  bundler (~> 2.2.0)
   capybara (~> 2.7)
   codeclimate-test-reporter (~> 0.2)
   fuubar (~> 2.0)
@@ -167,4 +167,4 @@ DEPENDENCIES
   webmock (~> 3.0.1)
 
 BUNDLED WITH
-   1.14.3
+   2.2.10
