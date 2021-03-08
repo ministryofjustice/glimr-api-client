@@ -6,6 +6,7 @@ PATH
 
 GEM
   remote: https://rubygems.org/
+  remote: https://oss:Q7U7p2q2XlpY45kwqjCpXLIPf122rjkR@gem.mutant.dev/
   specs:
     abstract_type (0.0.7)
     adamantium (0.2.0)
@@ -78,6 +79,7 @@ GEM
       procto (~> 0.0.2)
       regexp_parser (~> 0.3.6)
       unparser (~> 0.2.5)
+    mutant-license (0.1.1.2.1739399027284447558325915053311580324856.0)
     mutant-rspec (0.8.11)
       mutant (~> 0.8.11)
       rspec-core (>= 3.4.0, < 3.6.0)
@@ -159,6 +161,7 @@ DEPENDENCIES
   codeclimate-test-reporter (~> 0.2)
   fuubar (~> 2.0)
   glimr-api-client!
+  mutant-license!
   mutant-rspec (~> 0.8)
   pry-byebug (~> 3.4)
   rake (~> 10.0)
@@ -167,4 +170,4 @@ DEPENDENCIES
   webmock (~> 3.0.1)
 
 BUNDLED WITH
-   2.2.10
+   2.2.13
