@@ -79,7 +79,8 @@ RSpec.describe GlimrApiClient::Api do
 
       it "logs the request" do
         subject.tap do |o|
-          expect($stdout).to receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}])
+          expect($stdout).to receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}], "\n").once
+          expect($stdout).to receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}], "\n").once
           o.post
         end
       end
@@ -232,7 +233,8 @@ RSpec.describe GlimrApiClient::Api do
 
       it "logs the request" do
         subject.tap do |o|
-          expect($stdout).to receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}])
+          expect($stdout).to receive(:write).with(%[GLIMR POST: /endpoint - {"parameter":"parameter"}], "\n").once
+          expect($stdout).to receive(:write).with(%[GLIMR RESPONSE: {"response":"response"}], "\n").once
           o.post
         end
       end

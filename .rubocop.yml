@@ -2,12 +2,20 @@ AllCops:
   TargetRubyVersion: 2.7
   Exclude:
     - './*'
+    - 'bin/*'
     - 'lib/tasks/**/*'
     - 'spec/**/*'
 
 ####################################
 ## Customization for this project ##
 ####################################
+
+MethodLength:
+  Max: 20
+
+Lint/MissingSuper:
+  Enabled: false
+
 Documentation:
   Enabled: false
 

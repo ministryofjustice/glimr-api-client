@@ -2,9 +2,13 @@ module GlimrApiClient
   # TODO: rename so it follow api spec
   class Update < Base
     class FeeLiabilityNotFound < StandardError; end
+
     class PaymentReferenceInvalidFormat < StandardError; end
+
     class GovPayReferenceInvalidFormat < StandardError; end
+
     class InvalidAmount < StandardError; end
+
     class GovPayReferenceExistsOnSystem < StandardError; end
 
     # TODO: Move this and initialize into Base. It's the same for all but Case.

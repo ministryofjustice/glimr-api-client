@@ -1,6 +1,7 @@
 module GlimrApiClient
   class HwfRequested < Base
-    class FeeLiabilityNotFound < StandardError; end;
+    class FeeLiabilityNotFound < StandardError; end
+
     class InvalidAmount < StandardError; end
 
     attr_reader :request_body

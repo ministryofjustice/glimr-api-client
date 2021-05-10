@@ -2,6 +2,7 @@ module GlimrApiClient
   # TODO: rename so it follow api spec
   class FindCase < Base
     class NotFound < StandardError; end
+
     class InvalidCaseNumber < StandardError; end
 
     TRIBUNAL_JURISDICTION_ID = 8
@@ -27,9 +28,9 @@ module GlimrApiClient
     # title)
     def title
       @title ||= begin
-                   fee = unpaid_fees.any? ? unpaid_fees.first : all_fees.first
-                   fee.nil? ? 'Missing Title' : fee.case_title
-                 end
+        fee = unpaid_fees.any? ? unpaid_fees.first : all_fees.first
+        fee.nil? ? 'Missing Title' : fee.case_title
+      end
     end
 
     # We only care about outstanding fee liabilities, wrt what we are asking the
@@ -41,7 +42,7 @@ module GlimrApiClient
     private
 
     def unpaid_fees
-      @unpaid_fees ||= all_fees.find_all {|fee| fee.amount > 0}
+      @unpaid_fees ||= all_fees.find_all { |fee| fee.amount.positive? }
     end
 
     def all_fees
