@@ -1,0 +1,46 @@
+# Ruby
+# Package your Ruby project.
+# Add steps that install rails, analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/ruby
+
+name: '$(SourceBranchName)-$(Build.SourceVersion) Build-$(Build.BuildId)'
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+  tags:
+    include:
+    - v*
+
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - master
+      - feature/*
+      - bugfix/*
+
+variables:
+  application.name: 'glimer-api-client'
+  azure.subscription.endpoint: 'hmcts-pet'
+  manual.branch.prefix: 'master'
+
+jobs:
+
+  - job: TestApplication
+
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    variables:
+      rubyVersion: '= 2.7.3'
+      bundlerVersion: '2.2.15'
+      env: 'test'
+
+
+    steps:
+    - template: ./pipeline-steps/test-application.yaml
+    - template: ./pipeline-steps/publish-tests.yaml
