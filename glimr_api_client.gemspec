@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.10'
   spec.add_development_dependency 'rubocop', '~> 1.14'
   spec.add_development_dependency 'webmock', '~> 3.0.1'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
 
   spec.add_dependency 'typhoeus', '~> 1.1.2'
 end
