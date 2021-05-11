@@ -11,11 +11,11 @@ module GlimrApiClient
     end
 
     def available?
-      response_body.fetch(:glimrAvailable).eql?('yes').tap { |status|
+      response_body.fetch(:glimrAvailable).eql?('yes').tap do |status|
         if status.equal?(false)
           raise Unavailable
         end
-      }
+      end
     end
 
     private

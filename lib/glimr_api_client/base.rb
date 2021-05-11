@@ -17,8 +17,6 @@ module GlimrApiClient
       self
     end
 
-    def check_request!
-    end
+    def check_request!; end
   end
 end
-

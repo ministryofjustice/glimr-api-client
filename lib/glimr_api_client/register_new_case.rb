@@ -1,7 +1,9 @@
 module GlimrApiClient
   class RegisterNewCase < Base
     class JurisdictionNotFound < StandardError; end
+
     class OnlineMappingNotFoundOrInvalid < StandardError; end
+
     class CaseCreationFailed < StandardError; end
 
     TRIBUNAL_JURISDICTION_ID = 8

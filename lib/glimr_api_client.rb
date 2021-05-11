@@ -13,7 +13,10 @@ require 'glimr_api_client/update'
 
 module GlimrApiClient
   class RegisterNewCaseFailure < StandardError; end
+
   class Unavailable < StandardError; end
+
   class CaseNotFound < StandardError; end
-  class RequestError < StandardError; end;
+
+  class RequestError < StandardError; end
 end

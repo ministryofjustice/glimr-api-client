@@ -1,11 +1,17 @@
 module GlimrApiClient
   class PayByAccount < Base
-    class FeeLiabilityNotFound < StandardError; end;
+    class FeeLiabilityNotFound < StandardError; end
+
     class AccountNotFound < StandardError; end
+
     class InvalidAccountAndConfirmation < StandardError; end
+
     class InvalidAmount < StandardError; end
+
     class GlobalStatusInactive < StandardError; end
+
     class JurisdictionStatusInactive < StandardError; end
+
     class UnspecifiedError < StandardError; end
 
     attr_reader :request_body
@@ -37,7 +43,6 @@ module GlimrApiClient
       '/pbapaymentrequest'
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def re_raise_error(body)
       error = body.fetch(:message, nil)
       case body.fetch(:glimrerrorcode, nil)
@@ -51,11 +56,10 @@ module GlimrApiClient
         raise InvalidAmount, error
       when 521 # PBAGlobalStatus is inactive
         raise GlobalStatusInactive, error
-      when 522  # PBAJurisdictionStatus is inactive
+      when 522 # PBAJurisdictionStatus is inactive
         raise JurisdictionStatusInactive, error
       end
       super(message: error)
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end

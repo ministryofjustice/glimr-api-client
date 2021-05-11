@@ -30,7 +30,7 @@ module GlimrApiClient
     end
 
     def parse_response(response_body)
-      JSON.parse(response_body, symbolize_names: true).tap { |body|
+      JSON.parse(response_body, symbolize_names: true).tap do |body|
         # These are required because GLiMR can return errors in an otherwise
         # successful response.
         re_raise_error(body) if body.key?(:glimrerrorcode)
@@ -38,7 +38,7 @@ module GlimrApiClient
         # happen as all errors should have both `:glimrerrorcode` and
         # `:message`...
         re_raise_error(body) if body.key?(:message)
-      }
+      end
     end
 
     # If this is set using a constant, and the gem is included in a project
@@ -75,9 +75,9 @@ module GlimrApiClient
         method: :post,
         body: body,
         headers: {
-        'Content-Type' => 'application/json',
+          'Content-Type' => 'application/json',
         'Accept' => 'application/json'
-      },
+        },
       timeout: timeout
       )
     end
